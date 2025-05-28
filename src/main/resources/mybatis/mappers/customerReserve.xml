@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.customerReserve">
+
+    <select id="selectAllReservations" resultType="com.myspring.restaurant.vo.CustomerReserveFirstVO">
+        SELECT 
+            RESERVE_ID,
+            MEAL_TIME,
+            RESERVE_DATE,
+            TIME_SLOT,
+            FLOOR,
+            CREATED_AT
+        FROM ADMIN_RESERVATION
+        ORDER BY RESERVE_DATE DESC, TIME_SLOT ASC
+    </select>
+
+</mapper>

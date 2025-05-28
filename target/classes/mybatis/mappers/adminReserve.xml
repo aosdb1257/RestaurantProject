@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.adminReserve">
+
+    <insert id="insertReserve" parameterType="com.myspring.restaurant.vo.AdminReserveAddVO">
+        INSERT INTO ADMIN_RESERVATION (
+            RESERVE_ID, MEAL_TIME, RESERVE_DATE, TIME_SLOT, FLOOR, CREATED_AT
+        ) VALUES (
+            ADMIN_RESERVATION_SEQ.NEXTVAL,
+            #{mealTime},
+            TO_DATE(#{reserveDate}, 'YYYY-MM-DD'),
+            #{timeSlot},
+            #{floor},
+            SYSTIMESTAMP
+        )
+    </insert>
+
+</mapper>
