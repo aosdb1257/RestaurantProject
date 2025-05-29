@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>영화 상영시간 선택</title>
+  <title>예약 관련 선택</title>
   <!-- Flatpickr 관련 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -20,7 +20,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
     body {height: 100vh; }
   
-    .container { width: 80%; margin: 0 auto; padding-top: 10px; display: flex; }
+    .container { width: 60%; margin: 0 auto; padding-top: 10px; display: flex; }
     
     /* 왼쪽 사이드바  */
     .step-menu {
@@ -36,16 +36,16 @@
 	form {flex: 10;}
 	/* 메인화면 */
     .main-container {
-      display: flex; background-color: #f9f9f9;
+      display: flex; flex-direction: column; background-color: #f9f9f9;
     }
-	.area-select {display: flex}
+    .top-row {display: flex; justify-content: space-between;}
+	.area-select {display: flex; gap: 20px;}
     .area-select, .headCount-select {
       background: white; border-right: 1px solid #ccc;
       flex: 6; padding: 10px;
     }
-    .floor, .location {flex:1;}
+    .floor, .location {flex:1; }
     
-    .headCount-select { width: 250px; }
     .schedule-block {
       flex: 8; padding: 20px;
     }
@@ -88,8 +88,9 @@
     <div onclick="alert('이전 단계 완료 후 이동하세요')">04 결제완료</div>
   </div>
 
-  <form method="post" action="selectSeat.jsp">
+  <form id="reserveForm" method="post" action="">
     <div class="main-container">
+    <div class="top-row">
       <!-- 블록 2 -->
       <div class="area-select">
       	<div class="floor">
@@ -118,16 +119,17 @@
       <div class="headCount-select">
         <h4>인원수</h4>
         <div class="firstfloor-headCount-select" style="display:none">
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">2명</div>
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">4명</div>
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">6명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">2명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">4명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">6명</div>
         </div>
         <div class="secondfloor-headCount-select" style="display:none">
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">2명</div>
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">4명</div>
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">6명</div>
-	        <div class="headCount-option" onclick="selectItem(this, 'headcount')">8명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">2명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">4명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">6명</div>
+	        <div class="headCount-option" onclick="selectItem(this, 'headCount')">8명</div>
         </div>
+      </div>
       </div>
 
       <!-- 블록 4 -->
@@ -138,7 +140,6 @@
 		</label>
 		
 		<!-- 선택된 날짜를 form에 전달할 hidden input -->
-		<input type="hidden" name="date" id="input-date" value="${today}">
 		
 		<!-- 시간대 출력 -->
 		<div class="time-list" id="timeList"></div>
@@ -146,8 +147,9 @@
         <input type="hidden" name="floor" id="input-floor">
         <input type="hidden" name="location" id="input-location">
         <input type="hidden" name="headCount" id="input-headCount">
-        <input type="hidden" name="date" id="input-date" value="2025-05-31">
+		<input type="hidden" name="date" id="input-date" value="${today}">
         <input type="hidden" name="time" id="input-time">
+        <input type="hidden" name="reserveId" id="input-reserveId">
         <button type="submit" class="next-btn" id="nextBtn" disabled>다음 단계</button>
       </div>
     </div>
@@ -170,14 +172,17 @@
       // hidden 태그에 저장
       document.getElementById("input-" + type).value = selected[type];
       
+      const form = document.getElementById("reserveForm");
       // 층수 클릭시 위치와 인원수 옵션 보여주는 기능
       if (type === "floor") {
     	  if (element.innerText === "1층") {
     	    showSubArea("firstfloor");
     	    showHeadCountByFloor("firstfloor");
+    	    form.action = "${contextPath}/admin/customerReserveFirstFloor.do";
     	  } else if (element.innerText === "2층") {
     	    showSubArea("secondfloor");
     	    showHeadCountByFloor("secondfloor");
+    	    form.action = "${contextPath}/admin/customerReserveSecondFloor.do";
     	  }
     	}
       	validateForm();
@@ -198,8 +203,13 @@
     	  document.querySelector("." + floorId + "-headCount-select").style.display = "block";
     }
     function validateForm() {
+      console.log(selected.floor);
+      console.log(selected.location);
+      console.log(selected.headCount);
+      console.log(selected.date);
+      console.log(selected.time);
       const btn = document.getElementById("nextBtn");
-      if (selected.area && selected.headCount && selected.date && selected.time) {
+      if (selected.floor && selected.location && selected.headCount && selected.date && selected.time) {
         btn.classList.add("enabled");
         btn.disabled = false;
       }
@@ -211,6 +221,7 @@
 	const reserveList = [
 		<c:forEach var="vo" items="${reserveList}" varStatus="status">
 			{
+				reserveId: '${vo.reserve_Id}',
 				date: '<fmt:formatDate value="${vo.reserve_Date}" pattern="yyyy-MM-dd"/>',
 		   		time: '${vo.time_Slot}'
 		 	}
@@ -234,7 +245,10 @@
       const div = document.createElement("div");
       div.className = "time-slot";
       div.innerText = item.time;
-      div.onclick = () => selectItem(div, 'time');
+      div.onclick = () => {
+    	  selectItem(div, 'time');
+    	  document.getElementById("input-reserveId").value = item.reserveId;
+      }
       timeListDiv.appendChild(div);
     });
   }

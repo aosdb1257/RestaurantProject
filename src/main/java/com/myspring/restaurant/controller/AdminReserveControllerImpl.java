@@ -6,12 +6,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.myspring.restaurant.BaseController;
@@ -19,10 +19,11 @@ import com.myspring.restaurant.service.AdminReserveService;
 import com.myspring.restaurant.service.AdminReserveServiceImpl;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
+import com.myspring.restaurant.vo.RestaurantSeatVO;
 
 @Controller
 @RequestMapping("admin")
-public class AdminReserveControllerImpl extends BaseController implements AdminReserveController {
+public class AdminReserveControllerImpl extends BaseController {
 	
 	@Autowired
 	private AdminReserveService adminReserveService;
@@ -33,8 +34,7 @@ public class AdminReserveControllerImpl extends BaseController implements AdminR
 	}
 
 	// 관리자 예약 등록 화면 요청 
-	// localhost:8090/restaurant/admin/adminReserveAdd
-	@Override
+	// localhost:8090/restaurant/admin/adminReserveAddMain.do
 	@RequestMapping(value="/adminReserveAddMain.do" , method=RequestMethod.GET)
 	public ModelAndView adminReserveAddMain(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();  
@@ -44,7 +44,6 @@ public class AdminReserveControllerImpl extends BaseController implements AdminR
 	}
 	
 	// 관리자 예약 등록 처리
-	@Override
 	@RequestMapping(value="/addReserve.do", method=RequestMethod.POST)
 	public ModelAndView adminReserveAdd(@ModelAttribute("reserve") AdminReserveAddVO reserve, 
 			HttpServletRequest request,
@@ -70,8 +69,7 @@ public class AdminReserveControllerImpl extends BaseController implements AdminR
 	
 	
 	//----------------------------------------------------------------------------------------------------------------------------------
-
-	@Override
+	// 고객 예약 첫번쨰 화면 요청
 	@RequestMapping(value="/customerReserveFirst.do", method=RequestMethod.GET)
 	public ModelAndView customerReserveFirst(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();  
@@ -93,4 +91,68 @@ public class AdminReserveControllerImpl extends BaseController implements AdminR
 		mav.addObject("reserveList", customerReserveFirstVOs);
 		return mav;
 	}
+	@RequestMapping("/customerReserveFirstFloor.do")
+    public ModelAndView moveToSecondStepFirst(
+            @RequestParam("floor") String floor,
+            @RequestParam("location") String location,
+            @RequestParam("headCount") String headCount,
+            @RequestParam("date") String date,
+            @RequestParam("time") String time,
+            @RequestParam("reserveId") int reserveId) {
+
+		
+		
+        ModelAndView mav = new ModelAndView("customer/customerReserveFirstFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
+        
+        List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
+        for (RestaurantSeatVO seat : restaurantSeatVOs) {
+            System.out.println("좌석 ID: " + seat.getSeat_Id());
+            System.out.println("위치: " + seat.getLocation());
+            System.out.println("인원수: " + seat.getHead_Count());
+            System.out.println("층수: " + seat.getFloor());
+            System.out.println("-------------------------");
+        }
+        mav.addObject("seatList", restaurantSeatVOs);
+        
+        mav.addObject("floor", floor);
+        mav.addObject("location", location);
+        mav.addObject("headCount", headCount);
+        mav.addObject("date", date);
+        mav.addObject("time", time);
+
+        return mav;
+}
+	@RequestMapping("/customerReserveSecondFloor.do")
+	    public ModelAndView moveToSecondStepSecond(
+	            @RequestParam("floor") String floor,
+	            @RequestParam("location") String location,
+	            @RequestParam("headCount") String headCount,
+	            @RequestParam("date") String date,
+	            @RequestParam("time") String time,
+	            @RequestParam("reserveId") int reserveId) {
+
+	        List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
+	        for (RestaurantSeatVO seat : restaurantSeatVOs) {
+	            System.out.println("좌석 ID: " + seat.getSeat_Id());
+	            System.out.println("위치: " + seat.getLocation());
+	            System.out.println("인원수: " + seat.getHead_Count());
+	            System.out.println("층수: " + seat.getFloor());
+	            System.out.println("-------------------------");
+	            
+	        }
+	        System.out.println("총 좌석 수: " + restaurantSeatVOs.size());
+	        System.out.println("좌석 데이터가 정상적으로 전달됨: " + restaurantSeatVOs);
+	        
+	        ModelAndView mav = new ModelAndView("customer/customerReserveSecondFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
+	        mav.addObject("seatList", restaurantSeatVOs);
+	        
+	        mav.addObject("floor", floor);
+	        mav.addObject("location", location);
+	        mav.addObject("headCount", headCount);
+	        mav.addObject("date", date);
+	        mav.addObject("time", time);
+
+	        return mav;
+	}
+	
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.myspring.restaurant.dao.AdminReserveDAO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
+import com.myspring.restaurant.vo.RestaurantSeatVO;
 
 @Service
 public class AdminReserveServiceImpl implements AdminReserveService {
@@ -30,4 +31,13 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	public List<CustomerReserveFirstVO> customerReserveFirst() {
 		return adminReserveDAO.customerReserveFirst();
 	}
+
+	// 좌석 테이블 모두 조회
+	@Override
+	public List<RestaurantSeatVO> getAllSeats() {
+		
+		return adminReserveDAO.getAllSeats();
+	}
+
+	
 }

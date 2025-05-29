@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mappers.customerReserve">
-
+	<!-- 예약 전체 조회 -->
     <select id="selectAllReservations" resultType="com.myspring.restaurant.vo.CustomerReserveFirstVO">
         SELECT 
             RESERVE_ID,
@@ -16,5 +16,15 @@
         FROM ADMIN_RESERVATION
         ORDER BY RESERVE_DATE DESC, TIME_SLOT ASC
     </select>
-
+	
+	<!-- 좌석 전체 조회 -->
+    <select id="selectAllSeats" resultType="com.myspring.restaurant.vo.RestaurantSeatVO">
+        SELECT 
+            SEAT_ID,
+            LOCATION,
+            HEAD_COUNT,
+            FLOOR
+        FROM SEAT
+        ORDER BY FLOOR ASC, LOCATION ASC
+    </select>
 </mapper>

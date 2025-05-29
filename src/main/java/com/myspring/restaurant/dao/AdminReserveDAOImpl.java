@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
+import com.myspring.restaurant.vo.RestaurantSeatVO;
 
 @Repository
 public class AdminReserveDAOImpl implements AdminReserveDAO {
@@ -31,4 +32,10 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 		return sqlSession.selectList("mappers.customerReserve.selectAllReservations");
 	}
 
+	// 좌석 테이블 모두 조회
+	@Override
+	public List<RestaurantSeatVO> getAllSeats() {
+		return sqlSession.selectList("mappers.customerReserve.selectAllSeats");
+	}
+	
 }

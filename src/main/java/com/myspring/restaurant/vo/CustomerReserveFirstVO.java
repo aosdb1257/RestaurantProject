@@ -4,12 +4,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class CustomerReserveFirstVO {
-    private int reserve_Id;
-    private String meal_Time;
-    private java.sql.Date reserve_Date;
-    private String time_Slot;
-    private int floor;
-    private java.sql.Timestamp created_At;
+	private int reserve_Id;                // 예약 ID (PK, 자동 증가)
+	private String meal_Time;              // 식사 시간 ('lunch' 또는 'dinner')
+	private java.sql.Date reserve_Date;    // 예약 날짜 (yyyy-MM-dd)
+	private String time_Slot;              // 예약 시간대 (예: "12:00 ~ 13:00")
+	private int floor;                     // 예약 층수 (1 또는 2)
+	private java.sql.Timestamp created_At; // 생성 시각 (자동 기록)
 
     public CustomerReserveFirstVO() {	}
 

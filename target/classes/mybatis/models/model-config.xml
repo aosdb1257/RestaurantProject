@@ -4,8 +4,10 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+
     <typeAliases>
         <typeAlias type="com.myspring.restaurant.vo.AdminReserveAddVO" alias="AdminReserveAddVO" />
         <typeAlias type="com.myspring.restaurant.vo.CustomerReserveFirstVO" alias="CustomerReserveFirstVO" />
+        <typeAlias type="com.myspring.restaurant.vo.RestaurantSeatVO" alias="RestaurantSeatVO" />
     </typeAliases>
 </configuration>
