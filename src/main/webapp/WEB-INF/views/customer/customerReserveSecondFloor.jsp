@@ -13,10 +13,11 @@
     display: flex;
     flex-direction: column;
     margin: 40px auto 0;
+    border: 1px solid black;
   }
   .info-space {
     width: 887px;
-    height: 100px;
+    height: 70px;
     background-color: #f4f8fc;
     border: 1px solid #ccc;
     padding: 15px 20px;
@@ -29,19 +30,13 @@
     font-size: 15px;
   }
   .info-box {
-    background-color: #e9f1ff;
+    font-weight: bold;
     padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
 
-  .info-box span {
-    font-weight: bold;
-    color: #00509e;
-  }
   .seat-space {
     position: relative;
     width: 887px;
@@ -80,24 +75,13 @@
 </head>
 <body>
 <div>
-	<c:if test="${not empty seatList}">
-	    <ul>
-	        <c:forEach var="seat" items="${seatList}">
-	            <li>
-	                좌석 ID: ${seat.seat_Id}, 위치: ${seat.location}, 인원수: ${seat.head_Count}, 층수: ${seat.floor}
-	            </li>
-	        </c:forEach>
-	    </ul>
-	</c:if>
-	<c:if test="${empty seatList}">
-	    <p>좌석 정보가 없습니다.</p>
-	</c:if>
 <div class="container">
     <!-- 정보 출력 영역 -->
-    <div style="width: 887px; margin-bottom: 10px; font-size: 20px; 
-    font-weight: bold; color: #00509e; text-align: center;">
-  예약 정보
-</div>
+    <div style="width: 827px; padding: 30px; font-size: 30px; 
+     color: #1a4f7a; text-align: left;
+    border-bottom: 2px solid #3180c3;">
+  		예약하기
+	</div>
 	<div class="info-space">
 	  <div class="info-box">층 : ${floor}</div>
 	  <div class="info-box">위치 : ${location}</div>
@@ -134,8 +118,6 @@
     <!-- 오른쪽 중앙 -->
     <div class="seat" data-seat-id="17" style="top: 266px; left: 703px; width: 62px; height: 96px;" onclick="selectSeat(17)"></div>
 	
-	<!-- 버튼 추가 -->
-	<button onclick="goNextStep()" class="next-btn">다음 단계</button>
   </div>
 </div>
 
@@ -143,20 +125,20 @@
   const seatList = [
     <c:forEach var="seat" items="${seatList}" varStatus="status">
       {
-        seatId: '${seat.seat_Id}',
+        seatId: ${seat.seat_Id},
         location: '${seat.location}',
-        headCount: '${seat.head_Count}',
-        floor: '${seat.floor}'
+        headCount: ${seat.head_Count},
+        floor: ${seat.floor}
       }
-      <c:if test="${!status.last}">,</c:if>
+      <c:if test='${!status.last}'>,</c:if>
     </c:forEach>
   ];
-  console.log(seatList);
 </script>
 
 <script>
   // 좌석 div에 좌석 정보 추가 (tooltip or 내부 텍스트 등)
   window.onload = function () {
+
     seatList.forEach(seat => {
       const seatDiv = document.querySelector(`.seat[data-seat-id='${seat.seatId}']`);
       if (seatDiv) {

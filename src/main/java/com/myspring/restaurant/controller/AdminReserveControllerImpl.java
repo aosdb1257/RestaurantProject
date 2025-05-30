@@ -24,7 +24,6 @@ import com.myspring.restaurant.vo.RestaurantSeatVO;
 @Controller
 @RequestMapping("admin")
 public class AdminReserveControllerImpl extends BaseController {
-	
 	@Autowired
 	private AdminReserveService adminReserveService;
 
@@ -72,9 +71,8 @@ public class AdminReserveControllerImpl extends BaseController {
 	// 고객 예약 첫번쨰 화면 요청
 	@RequestMapping(value="/customerReserveFirst.do", method=RequestMethod.GET)
 	public ModelAndView customerReserveFirst(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		HttpSession session = request.getSession();  
-		session.setAttribute("customerId", 16);
 		
+		// 관리자가 등록한 모든 예약 정보
 		List<CustomerReserveFirstVO> customerReserveFirstVOs = adminReserveService.customerReserveFirst();
 		
 		for (CustomerReserveFirstVO vo : customerReserveFirstVOs) {
@@ -99,10 +97,8 @@ public class AdminReserveControllerImpl extends BaseController {
             @RequestParam("date") String date,
             @RequestParam("time") String time,
             @RequestParam("reserveId") int reserveId) {
-
 		
-		
-        ModelAndView mav = new ModelAndView("customer/customerReserveFirstFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
+        ModelAndView mav = new ModelAndView("/customer/customerReserveFirstFloor"); // JSP: /WEB-INF/views/customer/customerReserveFirst.jsp
         
         List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
         for (RestaurantSeatVO seat : restaurantSeatVOs) {
@@ -119,40 +115,60 @@ public class AdminReserveControllerImpl extends BaseController {
         mav.addObject("headCount", headCount);
         mav.addObject("date", date);
         mav.addObject("time", time);
+        mav.addObject("reserveId", reserveId);
+        
+        return mav;
+	}
+	@RequestMapping("/customerReserveSecondFloor.do")
+    public ModelAndView moveToSecondStepSecond(
+            @RequestParam("floor") String floor,
+            @RequestParam("location") String location,
+            @RequestParam("headCount") String headCount,
+            @RequestParam("date") String date,
+            @RequestParam("time") String time,
+            @RequestParam("reserveId") int reserveId) {
+
+        List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
+        for (RestaurantSeatVO seat : restaurantSeatVOs) {
+            System.out.println("좌석 ID: " + seat.getSeat_Id());
+            System.out.println("위치: " + seat.getLocation());
+            System.out.println("인원수: " + seat.getHead_Count());
+            System.out.println("층수: " + seat.getFloor());
+            System.out.println("-------------------------");
+            
+        }
+        System.out.println("총 좌석 수: " + restaurantSeatVOs.size());
+        System.out.println("좌석 데이터가 정상적으로 전달됨: " + restaurantSeatVOs);
+        
+        ModelAndView mav = new ModelAndView("/customer/customerReserveSecondFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
+        mav.addObject("seatList", restaurantSeatVOs);
+        
+        mav.addObject("floor", floor);
+        mav.addObject("location", location);
+        mav.addObject("headCount", headCount);
+        mav.addObject("date", date);
+        mav.addObject("time", time);
 
         return mav;
-}
-	@RequestMapping("/customerReserveSecondFloor.do")
-	    public ModelAndView moveToSecondStepSecond(
-	            @RequestParam("floor") String floor,
-	            @RequestParam("location") String location,
-	            @RequestParam("headCount") String headCount,
-	            @RequestParam("date") String date,
-	            @RequestParam("time") String time,
-	            @RequestParam("reserveId") int reserveId) {
-
-	        List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
-	        for (RestaurantSeatVO seat : restaurantSeatVOs) {
-	            System.out.println("좌석 ID: " + seat.getSeat_Id());
-	            System.out.println("위치: " + seat.getLocation());
-	            System.out.println("인원수: " + seat.getHead_Count());
-	            System.out.println("층수: " + seat.getFloor());
-	            System.out.println("-------------------------");
-	            
-	        }
-	        System.out.println("총 좌석 수: " + restaurantSeatVOs.size());
-	        System.out.println("좌석 데이터가 정상적으로 전달됨: " + restaurantSeatVOs);
-	        
-	        ModelAndView mav = new ModelAndView("customer/customerReserveSecondFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
-	        mav.addObject("seatList", restaurantSeatVOs);
-	        
-	        mav.addObject("floor", floor);
-	        mav.addObject("location", location);
-	        mav.addObject("headCount", headCount);
-	        mav.addObject("date", date);
-	        mav.addObject("time", time);
-
-	        return mav;
+	}
+	// 세 번째 화면으로(결제화면)
+	@RequestMapping("customerReserveThird.do")
+	public ModelAndView customerReserveThird(
+			@RequestParam("seatId") int seatId,
+		    @RequestParam("floor") String floor,
+		    @RequestParam("location") String location,
+		    @RequestParam("headCount") String headCount,
+		    @RequestParam("date") String date,
+		    @RequestParam("time") String time) {
+	    
+		ModelAndView mav = new ModelAndView("/customer/customerReserveThird"); // JSP: /WEB-INF/views/customer/customerReserveThird.jsp
+		mav.addObject("seatId", seatId);
+		mav.addObject("floor", floor);
+		mav.addObject("location", location);
+		mav.addObject("headCount", headCount);
+		mav.addObject("date", date);
+		mav.addObject("time", time);
+		return mav;
 	}
 	
 }

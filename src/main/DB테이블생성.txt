@@ -1,0 +1,140 @@
+-- 1. 기존 테이블 삭제 (외래키 순서 고려)
+
+DROP TABLE noir_review CASCADE CONSTRAINTS;
+DROP TABLE noir_reservation CASCADE CONSTRAINTS;
+DROP TABLE noir_menu CASCADE CONSTRAINTS;
+DROP TABLE noir_supplement_menu CASCADE CONSTRAINTS;
+DROP TABLE noir_wine CASCADE CONSTRAINTS;
+DROP TABLE noir_photo CASCADE CONSTRAINTS;
+DROP TABLE noir_seat CASCADE CONSTRAINTS;
+DROP TABLE noir_member CASCADE CONSTRAINTS;
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE noir_review CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_reservation CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_menu CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_supplement_menu CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_wine CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_photo CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_seat CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE noir_member CASCADE CONSTRAINTS';
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL; -- 테이블 없으면 무시
+END;
+/
+
+-- 2. 기존 시퀀스 삭제
+BEGIN
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_member_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_seat_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_photo_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_menu_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_supplement_menu_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_wine_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_reservation_id';
+    EXECUTE IMMEDIATE 'DROP SEQUENCE seq_noir_review_id';
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END;
+/
+
+-- 3. 멤버 테이블
+CREATE TABLE noir_member (
+    member_id NUMBER PRIMARY KEY,                                    -- 회원 고유 ID (PK)
+    login_id VARCHAR2(50) NOT NULL UNIQUE,                           -- 로그인 아이디
+    password VARCHAR2(100),                                          -- 비밀번호
+    name VARCHAR2(50),                                               -- 고객이름
+    phone VARCHAR2(20),                                              -- 전화번호
+    role VARCHAR2(20) CHECK (role IN ('ADMIN', 'USER')),             -- 역할: 관리자 / 고객
+    social_type VARCHAR2(20),                                        -- 소셜 로그인 종류 (예: 'KAKAO')
+    sns_id VARCHAR2(100),                                            -- 소셜 서비스에서 받은 사용자 고유 ID
+    profileImage VARCHAR2(200)                                       -- 프로필 이미지 URL
+);
+
+-- 4. 좌석 테이블
+CREATE TABLE noir_seat (
+    seat_id NUMBER PRIMARY KEY,                                      -- 좌석 ID (PK)
+    seat_number VARCHAR2(10) NOT NULL,                               -- 좌석 번호 (예: A1, B2)
+    floor NUMBER,                                                    -- 좌석이 있는 층
+    capacity NUMBER                                                  -- 해당 좌석 인원 수
+);
+
+-- 5. 사진 테이블
+CREATE TABLE noir_photo (
+    photo_id NUMBER PRIMARY KEY,                                     -- 사진 ID (PK)
+    photo_url VARCHAR2(300),                                         -- 사진 URL 경로
+    photo_type VARCHAR2(20) CHECK (photo_type IN ('MENU', 'GALLERY'))-- 사진 용도: 메뉴 / 갤러리
+);
+
+-- 6. 메뉴 테이블
+CREATE TABLE noir_menu (
+    menu_id NUMBER PRIMARY KEY,                                      -- 메뉴 ID (PK)
+    menu_name VARCHAR2(100) NOT NULL,                                -- 메뉴 이름
+    menu_english_name VARCHAR2(100),                                -- 메뉴 영문 이름
+    menu_description CLOB,                                           -- 메뉴 설명 (긴 텍스트)
+    menu_type VARCHAR2(100),                                         -- 메뉴 종류 (디너,런치,채식)
+    photo_id NUMBER,                                                 -- 사진 ID (FK)
+    FOREIGN KEY (photo_id) REFERENCES noir_photo(photo_id)           -- 변경된 사진 테이블명으로 수정
+);
+-- 6-1. 보충 메뉴 테이블
+CREATE TABLE noir_supplement_menu (
+    menu_id NUMBER PRIMARY KEY,                                      -- 메뉴 ID (PK)
+    menu_name VARCHAR2(100) NOT NULL,                                -- 메뉴 이름
+    menu_english_name VARCHAR2(100),                                 -- 메뉴 영문 이름
+    menu_description CLOB,                                           -- 메뉴 설명 (긴 텍스트)
+    menu_type VARCHAR2(100),                                         -- 메뉴 종류 (프리미엄,디저트)
+    menu_price NUMBER                                                 
+);
+
+-- 6-2. 와인리스트 테이블
+CREATE TABLE noir_wine (
+    wine_id NUMBER PRIMARY KEY,
+    wine_name VARCHAR2(200) NOT NULL,
+    wine_type VARCHAR2(50),
+    region VARCHAR2(100),
+    vintage NUMBER,
+    producer VARCHAR2(100),
+    price NUMBER,
+    bottle_size VARCHAR2(20),
+    description CLOB,
+    wine_category VARCHAR2(100),
+    photo_id NUMBER
+);
+
+-- 7. 예약 테이블
+CREATE TABLE noir_reservation (
+    reservation_id NUMBER PRIMARY KEY,                               -- 예약 ID (PK)
+    reservation_date DATE NOT NULL,                                  -- 예약 날짜
+    meal_type VARCHAR2(20) CHECK (meal_type IN ('LUNCH', 'DINNER')), -- 식사 종류
+    vegetarian CHAR(1) CHECK (vegetarian IN ('Y', 'N')),             -- 채식 여부
+    guest_count NUMBER,                                              -- 인원 수
+    member_id NUMBER,                                                -- 예약자 ID (FK)
+    seat_id NUMBER,                                                  -- 좌석 ID (FK)
+    status VARCHAR2(50),                                             -- 예약 상태 (예: RESERVED, CANCELLED)
+    FOREIGN KEY (member_id) REFERENCES noir_member(member_id),       -- FK 수정
+    FOREIGN KEY (seat_id) REFERENCES noir_seat(seat_id)              -- FK 수정
+);
+
+-- 8. 리뷰 테이블
+CREATE TABLE noir_review (
+    review_id NUMBER PRIMARY KEY,                                    -- 리뷰 ID (PK)
+    title VARCHAR2(200),                                             -- 리뷰 제목
+    content CLOB,                                                    -- 리뷰 내용 (긴 텍스트)
+    rating NUMBER CHECK (rating BETWEEN 1 AND 5),                    -- 별점 (1~5점)
+    reservation_id NUMBER,                                           -- 해당 예약 ID (FK)
+    photo_url VARCHAR2(300),                                         -- 리뷰에 첨부된 사진 URL
+    FOREIGN KEY (reservation_id) REFERENCES noir_reservation(reservation_id) -- FK 수정
+);
+
+-- 9. 시퀀스 생성 (각 테이블 PK 용도)
+CREATE SEQUENCE seq_noir_member_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_seat_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_photo_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_menu_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_supplement_menu_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_wine_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_reservation_id START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_noir_review_id START WITH 1 INCREMENT BY 1;
+

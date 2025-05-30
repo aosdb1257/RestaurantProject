@@ -216,8 +216,9 @@
     }
   </script>
   
-<!-- 숨겨진 div에 전체 예약 정보 JSON 형태로 embed -->
+
 <script>
+	/* 예약 가능한 시간 목록  */
 	const reserveList = [
 		<c:forEach var="vo" items="${reserveList}" varStatus="status">
 			{
@@ -235,12 +236,13 @@
     const timeListDiv = document.getElementById("timeList");
     timeListDiv.innerHTML = ""; // 기존 시간 제거
 
+    // 관리자가 등록한 모든 예약정보 중 선택한 예약 정보와 일치하는 것만 필터링
     const filtered = reserveList.filter(item => item.date === selectedDate);
     if (filtered.length === 0) {
       timeListDiv.innerHTML = "<div>예약 가능한 시간이 없습니다.</div>";
       return;
     }
-
+	// 선택된 날짜에 해당하는 시간들을 화면에 출력하고, 클릭하면 해당 시간의 reserveId를 숨은 input에 저장
     filtered.forEach(item => {
       const div = document.createElement("div");
       div.className = "time-slot";

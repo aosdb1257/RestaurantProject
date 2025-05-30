@@ -1,0 +1,92 @@
+-- 관리자 예약정보 등록 테이블
+CREATE TABLE ADMIN_RESERVATION (
+    RESERVE_ID     NUMBER PRIMARY KEY,   -- id
+    MEAL_TIME      VARCHAR2(10),         -- 'lunch' or 'dinner'
+    RESERVE_DATE   DATE,                 -- 예약 날짜
+    TIME_SLOT      VARCHAR2(20),         -- 시간대 예: '12:00 ~ 13:00'
+    FLOOR          NUMBER(1),            -- 1 or 2
+    CREATED_AT     TIMESTAMP DEFAULT SYSTIMESTAMP
+);
+
+CREATE TABLE CUSTOMER_RESERVATION (
+    CUSTOMER_ID     NUMBER PRIMARY KEY,      -- 고객 예약 ID 
+    고객 아이디(FK)
+    SEAT_ID         NUMBER,                           -- 좌석 번호 (다른 좌석 테이블이 있다고 가정, FK로 처리 가능)
+    RESERVE_ID      NUMBER,                          -- ADMIN_RESERVATION의 FK
+    CONSTRAINT FK_RESERVE_ID FOREIGN KEY (RESERVE_ID)
+        REFERENCES ADMIN_RESERVATION(RESERVE_ID)
+);
+
+CREATE TABLE SEAT (
+    SEAT_ID     NUMBER PRIMARY KEY,       -- 좌석 고유 ID (PK)
+    LOCATION    VARCHAR2(50),             -- 위치 (ex: '창가', '중앙')
+    HEAD_COUNT  NUMBER(2),                -- 수용 인원수
+    FLOOR       NUMBER(1)                 -- 1층 or 2층
+);
+
+-- 계좌 테이블 (사장 계좌 1개만 존재)
+CREATE TABLE ACCOUNT (
+    ACCOUNT_ID   NUMBER PRIMARY KEY,            -- 계좌 고유 ID
+    OWNER_NAME   VARCHAR2(100) NOT NULL,        -- 예: '사장님'
+    BALANCE      NUMBER(10) DEFAULT 0           -- 현재 잔액
+);
+
+-- 결제 테이블 (고객 ID + 고객 이름 + 입금 계좌 ID 포함)
+CREATE TABLE PAYMENT (
+    PAYMENT_ID     NUMBER PRIMARY KEY,            -- 결제 고유 ID
+    CUSTOMER_ID    NUMBER NOT NULL,               -- 결제한 고객 ID (정확한 추적용)
+    AMOUNT         NUMBER(10) NOT NULL,           -- 결제 금액
+    PAYMENT_DATE   DATE DEFAULT SYSDATE,           -- 결제 일시
+    ACCOUNT_ID     NUMBER NOT NULL,                -- 입금된 계좌 ID (사장 계좌)
+
+    -- 외래키 제약조건
+    CONSTRAINT FK_PAYMENT_CUSTOMER
+      FOREIGN KEY (CUSTOMER_ID)
+      REFERENCES CUSTOMER(CUSTOMER_ID),
+
+    CONSTRAINT FK_PAYMENT_ACCOUNT
+      FOREIGN KEY (ACCOUNT_ID)
+      REFERENCES ACCOUNT(ACCOUNT_ID)
+);
+==========================================================
+
+1. 관리자가 등록한 모든 예약 정보 조회(등록)
+2. 등록되어 있는 모든 좌석 정보 조회(등록)
+3. 
+
+==========================================================
+
+
+1. "/customerReserveFirst.do"
+에서 관리자가 등록한 모든 예약 정보를 조회했고
+
+2. /customerReserveFirstFloor.do와 /customerReserveSecondFloor.do
+는 모든 좌석 정보를 조회했고 
+floor, 
+location, 
+headCount, 
+date, time, 
+reservedId     -- 관리자 예약등록 ID
+를 전달받아서
+
+선택한 좌석정보
+    private int seat_Id;       // 좌석 고유 ID (PK)
+    private String location;  // 위치 (ex: '창가', '중앙')
+    private int head_Count;    // 수용 인원수
+    private int floor;        // 층수 (1층 or 2층)
+와 함께 전달
+
+=>
+
+전달받는것은 
+선택한 좌석 id
+선택한 층
+선택한 장소
+선택한 인원수
+선택한 날짜
+선택한 시간
+그리고 이에 해당하는 관리자 예약 등록 id
+그리고 session에는 나의 회원 아이디가 포함되어야하고
+
+필요한건 런치냐 디너이냐에 따른 가격설정
+
