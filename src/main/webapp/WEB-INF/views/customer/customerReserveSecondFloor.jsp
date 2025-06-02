@@ -80,7 +80,7 @@
     <div style="width: 827px; padding: 30px; font-size: 30px; 
      color: #1a4f7a; text-align: left;
     border-bottom: 2px solid #3180c3;">
-  		예약하기
+  		좌석 선택
 	</div>
 	<div class="info-space">
 	  <div class="info-box">층 : ${floor}</div>

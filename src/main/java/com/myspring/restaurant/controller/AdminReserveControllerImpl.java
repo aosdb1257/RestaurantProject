@@ -159,7 +159,8 @@ public class AdminReserveControllerImpl extends BaseController {
 		    @RequestParam("location") String location,
 		    @RequestParam("headCount") String headCount,
 		    @RequestParam("date") String date,
-		    @RequestParam("time") String time) {
+		    @RequestParam("time") String time,
+			@RequestParam("reserveId") int reserveId) {
 	    
 		ModelAndView mav = new ModelAndView("/customer/customerReserveThird"); // JSP: /WEB-INF/views/customer/customerReserveThird.jsp
 		mav.addObject("seatId", seatId);
@@ -168,7 +169,23 @@ public class AdminReserveControllerImpl extends BaseController {
 		mav.addObject("headCount", headCount);
 		mav.addObject("date", date);
 		mav.addObject("time", time);
+		mav.addObject("reserveId", reserveId);
 		return mav;
+	}
+	// 결제하기(성공시 결제정보 화면)
+	@RequestMapping("customerReserveFour.do")
+	public ModelAndView customerReserveFour(
+			@RequestParam("seatId") int seatId,
+			@RequestParam("reserveId") int reserveId,
+			@RequestParam("totalPrice") int totalPrice) {
+		try {
+			adminReserveService.reserveAndPay(seatId, reserveId, totalPrice);
+			ModelAndView mav = new ModelAndView("/customer/customerReserveFour");
+			return mav;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("redirect:/errorPage.jsp");
+		}
 	}
 	
 }

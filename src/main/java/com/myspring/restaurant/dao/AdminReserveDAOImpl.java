@@ -1,8 +1,11 @@
 package com.myspring.restaurant.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,15 +17,12 @@ import com.myspring.restaurant.vo.RestaurantSeatVO;
 public class AdminReserveDAOImpl implements AdminReserveDAO {
     @Autowired
     private SqlSession sqlSession;
-	
+    
 	// 관리자 예약 등록하기
 	@Override
 	public void adminReserveAddDb(AdminReserveAddVO reserve) {
 		sqlSession.insert("mappers.adminReserve.insertReserve", reserve);
 	}
-
-
-	
 	
 	// ------------------------------------------------------------------------------------------------
 	
@@ -37,5 +37,44 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	public List<RestaurantSeatVO> getAllSeats() {
 		return sqlSession.selectList("mappers.customerReserve.selectAllSeats");
 	}
+	// 예약 정보 저장
+	@Override
+	public void insertCustomerReservation(int reserveId, int seatId) {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("reserveId", reserveId);
+	    paramMap.put("seatId", seatId);
+		
+		sqlSession.insert("mappers.customerReserve.insertCustomerReservation", paramMap);
+	}
+	// 잔액 확인
+	@Override
+	public int getBalance(int accountId) {
+		//return sqlSession.selectOne("mappers.customerReserve.getBalance", accountId);
+	    Integer balance = sqlSession.selectOne("mappers.customerReserve.getBalance", accountId);
+	    if (balance == null) {
+	        throw new IllegalArgumentException("해당 계좌의 잔액 정보를 찾을 수 없습니다. (accountId: " + accountId + ")");
+	    }
+	    return balance;
+	}
+	// 잔액 추가
+	@Override
+	public void updateBalance(int accountId, int amount) {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("accountId", accountId);
+	    paramMap.put("amount", amount);
+	    
+		sqlSession.update("mappers.customerReserve.updateBalance", paramMap);
+	}
+	// 거래 내역 저장
+	@Override
+	public void insertTransaction(int accountId, String type, int totalPrice) {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("accountId", accountId);
+	    paramMap.put("type", type);
+	    paramMap.put("totalPrice", totalPrice);
+		sqlSession.insert("mappers.customerReserve.insertTransaction", paramMap);
+	}
+	
+	
 	
 }

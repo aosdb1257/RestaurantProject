@@ -27,4 +27,37 @@
         FROM SEAT
         ORDER BY FLOOR ASC, LOCATION ASC
     </select>
+    
+    <!-- 고객 - 예약정보 저장 -->
+    <insert id="insertCustomerReservation" parameterType="map">
+	    INSERT INTO CUSTOMER_RESERVATION (CUSTOMER_ID, RESERVE_ID, SEAT_ID)
+	    VALUES (CUSTOMER_RESERVATION_SEQ.NEXTVAL, #{reserveId}, #{seatId})
+	</insert>
+	
+	<!-- 잔액 확인 -->
+	<select id="getBalance" parameterType="int" resultType="Integer">
+        SELECT BALANCE
+        FROM ACCOUNT
+        WHERE ACCOUNT_ID = #{accountId}
+    </select>
+    
+    <!-- 잔액 추가 -->
+    <update id="updateBalance" parameterType="map">
+	    UPDATE ACCOUNT
+	    SET BALANCE = BALANCE + #{amount}
+	    WHERE ACCOUNT_ID = #{accountId}
+	</update>
+	
+	<!-- 거래내역 저장 -->
+	<insert id="insertTransaction" parameterType="map">
+	    INSERT INTO TRANSACTION (
+	        TRANSACTION_ID, ACCOUNT_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_DATE
+	    ) VALUES (
+	        SEQ_TRANSACTION_ID.NEXTVAL, 
+	        #{accountId}, 
+	        #{type}, 
+	        #{totalPrice}, 
+	        SYSDATE
+	    )
+	</insert>
 </mapper>

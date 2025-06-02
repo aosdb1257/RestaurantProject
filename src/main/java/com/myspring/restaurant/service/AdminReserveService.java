@@ -18,4 +18,11 @@ public interface AdminReserveService {
 
 	// 모든 좌석 테이블 정보 조회
 	List<RestaurantSeatVO> getAllSeats();
+
+	// 결제하고 결제정보 저장
+	void reserveAndPay(int seatId, int reserveId, int totalPrice);
+	
+	// 잔액 확인
+	
+
 }

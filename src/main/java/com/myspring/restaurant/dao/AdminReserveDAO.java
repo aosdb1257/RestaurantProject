@@ -16,5 +16,17 @@ public interface AdminReserveDAO {
 	
 	// 좌석 테이블 모두 조회
 	List<RestaurantSeatVO> getAllSeats();
+	
+	// 예약 정보 저장
+	void insertCustomerReservation(int reserveId, int seatId);
+	
+	// 잔액 확인
+	int getBalance(int accountId);
+
+	// 잔액 차감
+	void updateBalance(int accountId, int i);
+	
+	// 거래 내역 저장
+	void insertTransaction(int accountId, String string, int totalPrice);
 
 }

@@ -82,7 +82,7 @@
     <div style="width: 827px; padding: 30px; font-size: 30px; 
      color: #1a4f7a; text-align: left;
     border-bottom: 2px solid #3180c3;">
-  		예약 하기
+  		좌석 선택
 	</div>
 	<div class="info-space">
 	  <div class="info-box">층 : ${floor}</div>
@@ -129,8 +129,11 @@
   <input type="hidden" name="reserveId" value="${reserveId}">
 </form>
 <script>
+    
+ 
   /* 이전 단계에서 선택한 값  */
   const selectedLocation = '${location}';
+  console.log("이전 단계에서 선택한 장소 : " + selectedLocation);
   
   const seatList = [
     <c:forEach var="seat" items="${seatList}" varStatus="status">
@@ -143,7 +146,8 @@
       <c:if test='${!status.last}'>,</c:if>
     </c:forEach>
   ];
-
+  console.log("✅ 서버에서 받아온 seatList:", seatList);
+  
   // 좌석 div에 좌석 정보 추가 
   window.onload = function () {
     seatList.forEach(seat => {
@@ -161,7 +165,8 @@
 
   function selectSeat(seatId) {
 	  const selectedSeat = seatList.find(seat => Number(seat.seatId) === Number(seatId));
-
+	  console.log("선택한 좌석 : " + selectedSeat);
+	  
 	  if (selectedSeat) {
 		  Swal.fire({
 			  title: '예약하기',
