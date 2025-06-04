@@ -47,9 +47,9 @@
 <div class="container">
   <div class="step-menu">
     <div class="active">01 상영시간</div>
-    <div onclick="alert('이전 단계 완료 후 이동하세요')">02 인원/좌석</div>
-    <div onclick="alert('이전 단계 완료 후 이동하세요')">03 결제</div>
-    <div onclick="alert('이전 단계 완료 후 이동하세요')">04 결제완료</div>
+    <div>02 인원/좌석</div>
+    <div>03 결제</div>
+    <div>04 결제완료</div>
   </div>
 
   <form id="reserveForm" method="post" action="">

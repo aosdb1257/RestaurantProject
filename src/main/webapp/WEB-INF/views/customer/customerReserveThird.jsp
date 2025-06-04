@@ -221,7 +221,7 @@
 				</div>
 			</div><!-- right-main  -->
 		</div><!-- main-reservation  -->
-		<form id="paymentForm" action="${contextPath}/admin/customerReserveFour.do" method="post">
+		<form id="paymentForm" action="${contextPath}/admin/customerReservePay.do" method="post">
 		  <input type="hidden" name="seatId" value="${seatId}">
 		  <input type="hidden" name="reserveId" value="${reserveId}">
 		  <input type="hidden" name="totalPrice" value="${totalPrice}">

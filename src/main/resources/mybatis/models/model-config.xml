@@ -9,5 +9,7 @@
         <typeAlias type="com.myspring.restaurant.vo.AdminReserveAddVO" alias="AdminReserveAddVO" />
         <typeAlias type="com.myspring.restaurant.vo.CustomerReserveFirstVO" alias="CustomerReserveFirstVO" />
         <typeAlias type="com.myspring.restaurant.vo.RestaurantSeatVO" alias="RestaurantSeatVO" />
+        <typeAlias type="com.myspring.restaurant.vo.AdminReservationVO" alias="AdminReservationVO" />
+        <typeAlias type="com.myspring.restaurant.vo.SeatVO" alias="SeatVO" />
     </typeAliases>
 </configuration>

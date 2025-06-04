@@ -2,9 +2,11 @@ package com.myspring.restaurant.dao;
 
 import java.util.List;
 
+import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
+import com.myspring.restaurant.vo.SeatVO;
 
 public interface AdminReserveDAO {
 	// 관리자 예약 등록하기
@@ -17,6 +19,9 @@ public interface AdminReserveDAO {
 	// 좌석 테이블 모두 조회
 	List<RestaurantSeatVO> getAllSeats();
 	
+	// 모든 예약한 테이블 번호 조회
+	List<Integer> getReservedSeats(int reserveId);
+	
 	// 예약 정보 저장
 	void insertCustomerReservation(int reserveId, int seatId);
 	
@@ -28,5 +33,16 @@ public interface AdminReserveDAO {
 	
 	// 거래 내역 저장
 	void insertTransaction(int accountId, String string, int totalPrice);
+	
+	// 아이디로 해당 좌석 조회
+	SeatVO getSeatById(int seatId);
+
+	// 아이디로 해당 에약 조회
+	AdminReservationVO getAdminReservationById(int reserveId);
+	
+	// 중복 결제 방지
+	int countReservation(int reserveId, int seatId);
+
+	
 
 }

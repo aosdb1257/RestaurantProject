@@ -9,9 +9,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
+import com.myspring.restaurant.vo.SeatVO;
 
 @Repository
 public class AdminReserveDAOImpl implements AdminReserveDAO {
@@ -37,6 +39,13 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	public List<RestaurantSeatVO> getAllSeats() {
 		return sqlSession.selectList("mappers.customerReserve.selectAllSeats");
 	}
+	
+	// 예약한 좌석 테이블 번호 조회
+	@Override
+	public List<Integer> getReservedSeats(int reserveId) {
+		return sqlSession.selectList("mappers.customerReserve.selectAllReservedSeats", reserveId);
+	}
+
 	// 예약 정보 저장
 	@Override
 	public void insertCustomerReservation(int reserveId, int seatId) {
@@ -73,6 +82,26 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	    paramMap.put("type", type);
 	    paramMap.put("totalPrice", totalPrice);
 		sqlSession.insert("mappers.customerReserve.insertTransaction", paramMap);
+	}
+
+	// 아이디로 해당 좌석 조회
+	@Override
+	public SeatVO getSeatById(int seatId) {
+		return sqlSession.selectOne("mappers.customerReserve.selectSeatById", seatId);
+	}
+
+	// 아이디로 해당 예약 조회
+	@Override
+	public AdminReservationVO getAdminReservationById(int reserveId) {
+		return sqlSession.selectOne("mappers.customerReserve.selectAdminReservationById", reserveId);
+	}
+	// 중복 결제 방지
+	@Override
+	public int countReservation(int reserveId, int seatId) {
+		Map<String, Integer> paramMap = new HashMap<String, Integer>();
+		paramMap.put("reserveId", reserveId);
+		paramMap.put("seatId", seatId);
+		return sqlSession.selectOne("mappers.customerReserve.countReservation", paramMap);
 	}
 	
 	

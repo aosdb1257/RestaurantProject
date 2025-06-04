@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.myspring.restaurant.BaseController;
 import com.myspring.restaurant.service.AdminReserveService;
 import com.myspring.restaurant.service.AdminReserveServiceImpl;
+import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
+import com.myspring.restaurant.vo.SeatVO;
 
 @Controller
 @RequestMapping("admin")
@@ -50,15 +53,19 @@ public class AdminReserveControllerImpl extends BaseController {
 	    response.setContentType("text/html; charset=UTF-8");
 	    response.setCharacterEncoding("UTF-8");
 	    
-		String contextPath = request.getContextPath();
-		
 	    try {
 	        adminReserveService.adminReserveAddDb(reserve);
-	        PrintWriter out = response.getWriter();
 	        return new ModelAndView("redirect:/admin/adminReserveAddMain.do");
 	    } catch (Exception e) {
 	        e.printStackTrace(); 
 	        PrintWriter out = response.getWriter();
+	        
+	        // 중복 예약 예외일 경우
+	        if (e instanceof org.springframework.dao.DuplicateKeyException) {
+	            out.println("<script>alert('⚠ 이미 예약된 날짜/시간/층입니다.'); history.back();</script>");
+	            return null;
+	        } 
+	        
 	        out.println("<script>alert('예약 등록 중 오류가 발생했습니다.'); history.back();</script>");
 	        out.flush();
 	        return null;
@@ -110,6 +117,9 @@ public class AdminReserveControllerImpl extends BaseController {
         }
         mav.addObject("seatList", restaurantSeatVOs);
         
+        List<Integer> reservedSeatsId = adminReserveService.getReservedSeats(reserveId); 
+        mav.addObject("reservedSeatsId", reservedSeatsId);
+        
         mav.addObject("floor", floor);
         mav.addObject("location", location);
         mav.addObject("headCount", headCount);
@@ -128,7 +138,9 @@ public class AdminReserveControllerImpl extends BaseController {
             @RequestParam("time") String time,
             @RequestParam("reserveId") int reserveId) {
 
-        List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
+		ModelAndView mav = new ModelAndView("/customer/customerReserveSecondFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
+
+		List<RestaurantSeatVO> restaurantSeatVOs = adminReserveService.getAllSeats();
         for (RestaurantSeatVO seat : restaurantSeatVOs) {
             System.out.println("좌석 ID: " + seat.getSeat_Id());
             System.out.println("위치: " + seat.getLocation());
@@ -137,17 +149,17 @@ public class AdminReserveControllerImpl extends BaseController {
             System.out.println("-------------------------");
             
         }
-        System.out.println("총 좌석 수: " + restaurantSeatVOs.size());
-        System.out.println("좌석 데이터가 정상적으로 전달됨: " + restaurantSeatVOs);
-        
-        ModelAndView mav = new ModelAndView("/customer/customerReserveSecondFloor"); // JSP: /WEB-INF/views/customer/customerReserveSecond.jsp
         mav.addObject("seatList", restaurantSeatVOs);
+
+        List<Integer> reservedSeatsId = adminReserveService.getReservedSeats(reserveId); 
+        mav.addObject("reservedSeatsId", reservedSeatsId);
         
         mav.addObject("floor", floor);
         mav.addObject("location", location);
         mav.addObject("headCount", headCount);
         mav.addObject("date", date);
         mav.addObject("time", time);
+        mav.addObject("reserveId", reserveId);
 
         return mav;
 	}
@@ -173,19 +185,36 @@ public class AdminReserveControllerImpl extends BaseController {
 		return mav;
 	}
 	// 결제하기(성공시 결제정보 화면)
-	@RequestMapping("customerReserveFour.do")
+	@RequestMapping("customerReservePay.do")
 	public ModelAndView customerReserveFour(
 			@RequestParam("seatId") int seatId,
 			@RequestParam("reserveId") int reserveId,
 			@RequestParam("totalPrice") int totalPrice) {
+		
 		try {
+			// 트랜잭션
 			adminReserveService.reserveAndPay(seatId, reserveId, totalPrice);
-			ModelAndView mav = new ModelAndView("/customer/customerReserveFour");
-			return mav;
+			
+			SeatVO seatVO = adminReserveService.getSeatById(seatId);
+			AdminReservationVO adminReservationVO = adminReserveService.getAdminReservationById(reserveId);
+			
+	        ModelAndView mav = new ModelAndView("/customer/customerReserveFour");
+	        mav.addObject("seatVO", seatVO);
+	        mav.addObject("adminReservationVO", adminReservationVO);
+	        mav.addObject("totalPrice", totalPrice);
+	        
+	        return mav;
+			
+		} catch (IllegalStateException  e) {
+	        // 중복 결제 등 사용자 실수에 의한 예외
+	        ModelAndView mav = new ModelAndView("common/alert"); // alert.jsp (아래 따로 작성)
+	        mav.addObject("message", e.getMessage());            // 예: "이미 결제된 예약입니다."
+	        mav.addObject("redirectUrl", "/admin/customerReserveFirst.do");  // 이동할 URL
+	        return mav;
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 			return new ModelAndView("redirect:/errorPage.jsp");
 		}
 	}
-	
 }

@@ -48,9 +48,15 @@
   }
 
   .seat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     background-color: rgba(0, 128, 0, 0.4);
     cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    
     border: 2px solid #fff;
     transition: background-color 0.2s;
     border-radius: 0;
@@ -94,28 +100,28 @@
 
 	<div class="seat-space">
 	  <!-- 좌측 상단, 1, 창가 -->
-	  <div class="seat disabled" data-seat-id="1" style="top: 295px; left: 40px; width: 84px; height: 88px;" onclick="selectSeat(1)"></div>
+	  <div class="seat disabled" data-seat-id="1" style="top: 295px; left: 40px; width: 84px; height: 88px;" onclick="selectSeat(1)">예약가능</div>
 	
 	  <!-- 좌측 아래, 2, 구석  -->
-	  <div class="seat disabled" data-seat-id="2" style="top: 507px; left: 45px; width: 136px; height: 40px;" onclick="selectSeat(2)"></div>
+	  <div class="seat disabled" data-seat-id="2" style="top: 507px; left: 45px; width: 136px; height: 40px;" onclick="selectSeat(2)">예약가능</div>
 	
 	  <!-- 2열 위, 3, 중앙 -->
-	  <div class="seat disabled" data-seat-id="3" style="top: 257px; left: 196px; width: 87px; height: 84px;" onclick="selectSeat(3)"></div>
+	  <div class="seat disabled" data-seat-id="3" style="top: 257px; left: 196px; width: 87px; height: 84px;" onclick="selectSeat(3)">예약가능</div>
 	
 	  <!-- 2열 아래, 4, 중앙 -->
-	  <div class="seat disabled" data-seat-id="4" style="top: 407px; left: 184px; width: 79px; height: 55px;" onclick="selectSeat(4)"></div>
+	  <div class="seat disabled" data-seat-id="4" style="top: 407px; left: 184px; width: 79px; height: 55px;" onclick="selectSeat(4)">예약가능</div>
 	
 	  <!-- 3열, 5, 입구근처 -->
-	  <div class="seat disabled" data-seat-id="5" style="top: 327px; left: 368px; width: 135px; height: 85px;" onclick="selectSeat(5)"></div>
+	  <div class="seat disabled" data-seat-id="5" style="top: 327px; left: 368px; width: 135px; height: 85px;" onclick="selectSeat(5)">예약가능</div>
 	
 	  <!-- 우측 위, 6, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="6" style="top: 78px; left: 678px; width: 82px; height: 62px;" onclick="selectSeat(6)"></div>
+	  <div class="seat disabled" data-seat-id="6" style="top: 78px; left: 678px; width: 82px; height: 62px;" onclick="selectSeat(6)">예약가능</div>
 	
 	  <!-- 우측 중앙, 7, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="7" style="top: 174px; left: 769px; width: 73px; height: 67px;" onclick="selectSeat(7)"></div>
+	  <div class="seat disabled" data-seat-id="7" style="top: 174px; left: 769px; width: 73px; height: 67px;" onclick="selectSeat(7)">예약가능</div>
 	
 	  <!-- 우측 아래, 8, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="8" style="top: 302px; left: 732px; width: 68px; height: 70px;" onclick="selectSeat(8)"></div>
+	  <div class="seat disabled" data-seat-id="8" style="top: 302px; left: 732px; width: 68px; height: 70px;" onclick="selectSeat(8)">예약가능</div>
 	
 	</div>
 </div>
@@ -129,12 +135,20 @@
   <input type="hidden" name="reserveId" value="${reserveId}">
 </form>
 <script>
-    
- 
   /* 이전 단계에서 선택한 값  */
   const selectedLocation = '${location}';
   console.log("이전 단계에서 선택한 장소 : " + selectedLocation);
+  const selectedHeadCount = '${headCount}';
+  console.log("이전 단계에서 선택한 장소 : " + selectedHeadCount);
   
+  // 예약한 좌석 id 번호들
+  const reservedSeatsId = [
+	  <c:forEach var="id" items="${reservedSeatsId}" varStatus="status">
+	    ${id}<c:if test="${!status.last}">,</c:if>
+	  </c:forEach>
+  ];
+  
+  // JSP의 seatList를 JS에서 쓸 수 있도록 객체 배열로
   const seatList = [
     <c:forEach var="seat" items="${seatList}" varStatus="status">
       {
@@ -148,20 +162,31 @@
   ];
   console.log("✅ 서버에서 받아온 seatList:", seatList);
   
-  // 좌석 div에 좌석 정보 추가 
-  window.onload = function () {
-    seatList.forEach(seat => {
-      const seatDiv = document.querySelector(".seat[data-seat-id='" + seat.seatId + "']");
-      if (seatDiv) {
-        seatDiv.title = seat.location + "(" + seat.head_Count + "명)";
-
-        // 서버에서 선택한 위치와 일치
-        if (seat.location === selectedLocation) {
-          seatDiv.classList.remove('disabled');
-        }
-      }
-    });
-  }
+    //클라이언트에서 선택한 위치와 인원수 일치시 선택가능하게
+	window.onload = function () {
+      // 1층에 있는 좌석들만
+	  seatList.forEach(seat => {
+	    const seatDiv = document.querySelector(".seat[data-seat-id='" + seat.seatId + "']");
+	    if (seatDiv) {
+	      const isReserved = reservedSeatsId.includes(seat.seatId);
+	      const selectedIntHeadCount = parseInt(selectedHeadCount);
+	
+	      if (isReserved) {
+	        seatDiv.classList.add('disabled');
+	        seatDiv.textContent = '예약됨';
+	        
+	        // 예약됨일 경우 배경색 따로 적용
+	        seatDiv.style.backgroundColor = 'rgba(200, 0, 0, 0.6)';
+	        seatDiv.style.color = 'white';
+	        seatDiv.style.fontWeight = 'bold';
+	      
+	      } else if ((seat.location === selectedLocation) && (seat.headCount === selectedIntHeadCount)) {
+	        seatDiv.classList.remove('disabled');
+	        seatDiv.textContent = '예약가능';
+	      }
+	    }
+	  });
+	};
 
   function selectSeat(seatId) {
 	  const selectedSeat = seatList.find(seat => Number(seat.seatId) === Number(seatId));

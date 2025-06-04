@@ -28,6 +28,13 @@
         ORDER BY FLOOR ASC, LOCATION ASC
     </select>
     
+    <!-- 예약한 좌석 번호 전체 조회 -->
+	<select id="selectAllReservedSeats" parameterType="int" resultType="int">
+	    SELECT SEAT_ID
+	    FROM CUSTOMER_RESERVATION
+	    WHERE RESERVE_ID = #{reserveId}
+	</select>
+    
     <!-- 고객 - 예약정보 저장 -->
     <insert id="insertCustomerReservation" parameterType="map">
 	    INSERT INTO CUSTOMER_RESERVATION (CUSTOMER_ID, RESERVE_ID, SEAT_ID)
@@ -60,4 +67,36 @@
 	        SYSDATE
 	    )
 	</insert>
+	
+	<!-- 해당 아이디에 대한 좌석 조회  -->
+	<select id="selectSeatById" parameterType="int" resultType="com.myspring.restaurant.vo.SeatVO">
+	    SELECT 
+	        SEAT_ID,
+	        LOCATION,
+	        HEAD_COUNT,
+	        FLOOR
+	    FROM SEAT
+	    WHERE SEAT_ID = #{seatId}
+	</select>
+	
+	<!-- 해당 아이디에 대한 예약 조회 -->
+	<select id="selectAdminReservationById" parameterType="int" resultType="com.myspring.restaurant.vo.AdminReservationVO">
+		SELECT 
+		  RESERVE_ID,
+		  MEAL_TIME,
+		  RESERVE_DATE,
+		  TIME_SLOT,
+		  FLOOR,
+		  CREATED_AT
+		FROM ADMIN_RESERVATION
+		WHERE RESERVE_ID = #{reserveId}
+	</select>
+	
+	<!-- 중복결제 방지 -->
+	<select id="countReservation" parameterType="map" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM CUSTOMER_RESERVATION
+	    WHERE RESERVE_ID = #{reserveId}
+	    AND SEAT_ID = #{seatId}
+	</select>
 </mapper>
