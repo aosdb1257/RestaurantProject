@@ -54,14 +54,6 @@
       </select>
     </div>
 
-    <!-- 층수 -->
-    <div class="form-group">
-      <label>층수 선택:</label>
-      <select name="floor">
-        <option value="1">1층</option>
-        <option value="2">2층</option>
-      </select>
-    </div>
 
     <!-- 제출 버튼 -->
     <div class="form-group">

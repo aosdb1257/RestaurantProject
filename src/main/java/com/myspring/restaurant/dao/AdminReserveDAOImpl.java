@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
+import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
 import com.myspring.restaurant.vo.SeatVO;
@@ -46,15 +47,6 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 		return sqlSession.selectList("mappers.customerReserve.selectAllReservedSeats", reserveId);
 	}
 
-	// 예약 정보 저장
-	@Override
-	public void insertCustomerReservation(int reserveId, int seatId) {
-	    Map<String, Object> paramMap = new HashMap<String, Object>();
-	    paramMap.put("reserveId", reserveId);
-	    paramMap.put("seatId", seatId);
-		
-		sqlSession.insert("mappers.customerReserve.insertCustomerReservation", paramMap);
-	}
 	// 잔액 확인
 	@Override
 	public int getBalance(int accountId) {
@@ -76,14 +68,25 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	}
 	// 거래 내역 저장
 	@Override
-	public void insertTransaction(int accountId, String type, int totalPrice) {
+	public void insertTransaction(int accountId, String type, int totalPrice, Integer memberId) {
 	    Map<String, Object> paramMap = new HashMap<String, Object>();
 	    paramMap.put("accountId", accountId);
 	    paramMap.put("type", type);
 	    paramMap.put("totalPrice", totalPrice);
+	    paramMap.put("memberId", memberId);
+	    
 		sqlSession.insert("mappers.customerReserve.insertTransaction", paramMap);
 	}
-
+	// 예약 정보 저장
+	@Override
+	public void insertCustomerReservation(int reserveId, int seatId, Integer memberId) {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("reserveId", reserveId);
+	    paramMap.put("seatId", seatId);
+	    paramMap.put("memberId", memberId);
+		
+		sqlSession.insert("mappers.customerReserve.insertCustomerReservation", paramMap);
+	}
 	// 아이디로 해당 좌석 조회
 	@Override
 	public SeatVO getSeatById(int seatId) {
@@ -102,6 +105,17 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 		paramMap.put("reserveId", reserveId);
 		paramMap.put("seatId", seatId);
 		return sqlSession.selectOne("mappers.customerReserve.countReservation", paramMap);
+	}
+	
+	// 결제 정보 조회
+	@Override
+	public CustomerGetReserveInfoVO selectPayInfo(Integer memberId, Integer reserveId, Integer seatId) {
+		Map<String, Integer> paramMap = new HashMap<String, Integer>();
+		paramMap.put("memberId", memberId);
+		paramMap.put("reserveId", reserveId);
+		paramMap.put("seatId", seatId);
+		
+		return sqlSession.selectOne("mappers.customerReserve.selectPayInfo", paramMap);
 	}
 	
 	

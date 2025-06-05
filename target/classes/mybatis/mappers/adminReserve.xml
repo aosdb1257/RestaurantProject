@@ -7,13 +7,12 @@
 
     <insert id="insertReserve" parameterType="com.myspring.restaurant.vo.AdminReserveAddVO">
         INSERT INTO ADMIN_RESERVATION (
-            RESERVE_ID, MEAL_TIME, RESERVE_DATE, TIME_SLOT, FLOOR, CREATED_AT
+            RESERVE_ID, MEAL_TIME, RESERVE_DATE, TIME_SLOT, CREATED_AT
         ) VALUES (
             ADMIN_RESERVATION_SEQ.NEXTVAL,
             #{mealTime},
             TO_DATE(#{reserveDate}, 'YYYY-MM-DD'),
             #{timeSlot},
-            #{floor},
             SYSTIMESTAMP
         )
     </insert>

@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +22,7 @@ import com.myspring.restaurant.service.AdminReserveService;
 import com.myspring.restaurant.service.AdminReserveServiceImpl;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
+import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
 import com.myspring.restaurant.vo.SeatVO;
@@ -27,6 +30,8 @@ import com.myspring.restaurant.vo.SeatVO;
 @Controller
 @RequestMapping("admin")
 public class AdminReserveControllerImpl extends BaseController {
+	static Logger logger = Logger.getLogger(AdminReserveControllerImpl.class);
+	
 	@Autowired
 	private AdminReserveService adminReserveService;
 
@@ -39,8 +44,6 @@ public class AdminReserveControllerImpl extends BaseController {
 	// localhost:8090/restaurant/admin/adminReserveAddMain.do
 	@RequestMapping(value="/adminReserveAddMain.do" , method=RequestMethod.GET)
 	public ModelAndView adminReserveAddMain(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		HttpSession session = request.getSession();  
-		session.setAttribute("adminId", 15);
 		
 	    return viewForm(request, response); // WEB-INF/views/admin/adminReserveAdd.jsp
 	}
@@ -87,7 +90,6 @@ public class AdminReserveControllerImpl extends BaseController {
 		    System.out.println("식사시간: " + vo.getMeal_Time());
 		    System.out.println("예약날짜: " + vo.getReserve_Date());
 		    System.out.println("시간대: " + vo.getTime_Slot());
-		    System.out.println("층: " + vo.getFloor());
 		    System.out.println("생성일: " + vo.getCreated_At());
 		    System.out.println("----------------------------");
 		}
@@ -185,36 +187,54 @@ public class AdminReserveControllerImpl extends BaseController {
 		return mav;
 	}
 	// 결제하기(성공시 결제정보 화면)
-	@RequestMapping("customerReservePay.do")
-	public ModelAndView customerReserveFour(
+	@RequestMapping(value = "customerReservePay.do", method = RequestMethod.POST)
+	public String customerReserveFour(
 			@RequestParam("seatId") int seatId,
 			@RequestParam("reserveId") int reserveId,
-			@RequestParam("totalPrice") int totalPrice) {
+			@RequestParam("totalPrice") int totalPrice,
+			HttpServletRequest request) {
 		
 		try {
+			HttpSession session = request.getSession();
+			session.setAttribute("reserveId", reserveId);
+			session.setAttribute("seatId", seatId);
+			//Integer memberId = (Integer) session.getAttribute("memberId");
+			Integer memberId = Integer.parseInt("15");
 			// 트랜잭션
-			adminReserveService.reserveAndPay(seatId, reserveId, totalPrice);
-			
-			SeatVO seatVO = adminReserveService.getSeatById(seatId);
-			AdminReservationVO adminReservationVO = adminReserveService.getAdminReservationById(reserveId);
-			
-	        ModelAndView mav = new ModelAndView("/customer/customerReserveFour");
-	        mav.addObject("seatVO", seatVO);
-	        mav.addObject("adminReservationVO", adminReservationVO);
-	        mav.addObject("totalPrice", totalPrice);
+			adminReserveService.reserveAndPay(seatId, reserveId, totalPrice, memberId);
 	        
-	        return mav;
+	        return "redirect:/admin/customerReserveFour.do";
 			
 		} catch (IllegalStateException  e) {
 	        // 중복 결제 등 사용자 실수에 의한 예외
-	        ModelAndView mav = new ModelAndView("common/alert"); // alert.jsp (아래 따로 작성)
-	        mav.addObject("message", e.getMessage());            // 예: "이미 결제된 예약입니다."
-	        mav.addObject("redirectUrl", "/admin/customerReserveFirst.do");  // 이동할 URL
-	        return mav;
+	        request.setAttribute("message", e.getMessage());
+	        request.setAttribute("redirectUrl", request.getContextPath() + "/admin/customerReserveFirst.do");
+	        return "common/alert";
 		} catch (Exception e) {
-			e.printStackTrace();
-			
-			return new ModelAndView("redirect:/errorPage.jsp");
+	        e.printStackTrace();
+	        return "redirect:/errorPage.jsp";
 		}
+	}
+	// adminReserveService.getSeatById(seatId)
+	// adminReserveService.getAdminReservationById(reserveId)
+	@RequestMapping("customerReserveFour.do")
+	public ModelAndView customerReserveFour(HttpServletRequest request) {
+		
+		
+		HttpSession session = request.getSession();
+	    // 고객 아이디 꺼내오기
+	    //Integer memberId = (Integer) session.getAttribute("memberId");
+	    Integer memberId = Integer.parseInt("15");
+	    Integer reserveId = (Integer) session.getAttribute("reserveId");
+	    Integer seatId = (Integer) session.getAttribute("seatId");
+	    
+	    CustomerGetReserveInfoVO infoVo = adminReserveService.selectPayInfo(memberId, reserveId, seatId);
+	    
+	    ModelAndView mav = new ModelAndView("/customer/customerReserveFour");
+	    System.out.println("infovo : " + infoVo);
+	    
+	    mav.addObject("info", infoVo);
+	    
+	    return mav;
 	}
 }

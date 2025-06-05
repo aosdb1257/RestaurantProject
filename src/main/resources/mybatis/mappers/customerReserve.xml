@@ -11,7 +11,6 @@
             MEAL_TIME,
             RESERVE_DATE,
             TIME_SLOT,
-            FLOOR,
             CREATED_AT
         FROM ADMIN_RESERVATION
         ORDER BY RESERVE_DATE DESC, TIME_SLOT ASC
@@ -37,8 +36,8 @@
     
     <!-- 고객 - 예약정보 저장 -->
     <insert id="insertCustomerReservation" parameterType="map">
-	    INSERT INTO CUSTOMER_RESERVATION (CUSTOMER_ID, RESERVE_ID, SEAT_ID)
-	    VALUES (CUSTOMER_RESERVATION_SEQ.NEXTVAL, #{reserveId}, #{seatId})
+	    INSERT INTO CUSTOMER_RESERVATION (CUSTOMER_ID, MEMBER_ID, RESERVE_ID, SEAT_ID)
+	    VALUES (CUSTOMER_RESERVATION_SEQ.NEXTVAL,#{memberId}, #{reserveId}, #{seatId})
 	</insert>
 	
 	<!-- 잔액 확인 -->
@@ -57,14 +56,15 @@
 	
 	<!-- 거래내역 저장 -->
 	<insert id="insertTransaction" parameterType="map">
-	    INSERT INTO TRANSACTION (
-	        TRANSACTION_ID, ACCOUNT_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_DATE
+	    INSERT INTO PAYMENT_TRANSACTION (
+	        TRANSACTION_ID, ACCOUNT_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_DATE, MEMBER_ID
 	    ) VALUES (
-	        SEQ_TRANSACTION_ID.NEXTVAL, 
+	        SEQ_PAYMENT_TRANSACTION_ID.NEXTVAL,
 	        #{accountId}, 
 	        #{type}, 
 	        #{totalPrice}, 
-	        SYSDATE
+	        SYSDATE,
+	        #{memberId}
 	    )
 	</insert>
 	
@@ -99,4 +99,28 @@
 	    WHERE RESERVE_ID = #{reserveId}
 	    AND SEAT_ID = #{seatId}
 	</select>
+	
+	<select id="selectPayInfo" parameterType="map" resultType="com.myspring.restaurant.vo.CustomerGetReserveInfoVO">
+	    SELECT
+	        s.SEAT_ID,
+	        s.LOCATION,
+	        s.HEAD_COUNT,
+	        s.FLOOR AS SEAT_FLOOR,
+	
+	        ar.RESERVE_ID,
+	        ar.MEAL_TIME,
+	        ar.RESERVE_DATE,
+	        ar.TIME_SLOT,
+	        ar.CREATED_AT
+	
+	    FROM CUSTOMER_RESERVATION cr
+	    JOIN SEAT s ON cr.SEAT_ID = s.SEAT_ID
+	    JOIN ADMIN_RESERVATION ar ON cr.RESERVE_ID = ar.RESERVE_ID
+	
+	    WHERE cr.MEMBER_ID = #{memberId}
+	      AND cr.RESERVE_ID = #{reserveId}
+	      AND cr.SEAT_ID = #{seatId}
+	</select>
+	
+	
 </mapper>

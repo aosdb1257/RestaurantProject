@@ -16,7 +16,20 @@
         <level value="info" />
         <!-- info 이상만 출력: info, warn, error -->
     </logger>
+    
+    <!-- MyBatis SQL 로그 출력용 로거 -->
+    <logger name="org.apache.ibatis">
+        <level value="DEBUG" />
+    </logger>
 
+    <logger name="org.mybatis">
+        <level value="DEBUG" />
+    </logger>
+
+    <logger name="java.sql">
+        <level value="DEBUG" />
+    </logger>
+    
     <!-- 루트 로거: 모든 로그의 기본 설정 -->
     <root>
         <priority value="warn" />

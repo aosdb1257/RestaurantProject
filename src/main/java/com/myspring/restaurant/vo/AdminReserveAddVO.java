@@ -8,19 +8,17 @@ public class AdminReserveAddVO {
     private String mealTime;          // 런치/디너
     private String reserveDate;       // 예약 날짜 (yyyy-MM-dd)
     private String timeSlot;          // 시간대 예: 12:00 ~ 13:00
-    private int floor;                // 층수 (1 or 2)
     private Timestamp createdAt;      // 등록 시간
     
     public AdminReserveAddVO() {
 	}
 
-	public AdminReserveAddVO(int reserveId, String mealTime, String reserveDate, String timeSlot, int floor,
+	public AdminReserveAddVO(int reserveId, String mealTime, String reserveDate, String timeSlot,
 			Timestamp createdAt) {
 		this.reserveId = reserveId;
 		this.mealTime = mealTime;
 		this.reserveDate = reserveDate;
 		this.timeSlot = timeSlot;
-		this.floor = floor;
 		this.createdAt = createdAt;
 	}
 
@@ -54,14 +52,6 @@ public class AdminReserveAddVO {
 
 	public void setTimeSlot(String timeSlot) {
 		this.timeSlot = timeSlot;
-	}
-
-	public int getFloor() {
-		return floor;
-	}
-
-	public void setFloor(int floor) {
-		this.floor = floor;
 	}
 
 	public Timestamp getCreatedAt() {

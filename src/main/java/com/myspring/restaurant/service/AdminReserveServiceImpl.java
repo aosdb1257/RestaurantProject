@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.myspring.restaurant.dao.AdminReserveDAO;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
+import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
 import com.myspring.restaurant.vo.CustomerReserveFirstVO;
 import com.myspring.restaurant.vo.RestaurantSeatVO;
 import com.myspring.restaurant.vo.SeatVO;
@@ -54,7 +55,7 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	// 결제하고 결제정보 저장
 	@Override
 	@Transactional
-	public void reserveAndPay(int seatId, int reserveId, int totalPrice) {
+	public void reserveAndPay(int seatId, int reserveId, int totalPrice, Integer memberId) {
 		int accountId = 1;
 		
 	    // 중복 결제 방지
@@ -63,10 +64,7 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	        throw new IllegalStateException("이미 결제된 예약입니다.");
 	    }
 		
-		// 1. 예약 정보 저장
-		adminReserveDAO.insertCustomerReservation(reserveId, seatId);
-		
-		// 2. 잔액 확인 및 추가
+		// 1. 잔액 확인 및 추가
 		Integer currentBalance = adminReserveDAO.getBalance(accountId);
 		logger.info("현재 잔액: " + currentBalance + ", 결제 금액: " + totalPrice);
 		
@@ -77,8 +75,11 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 		 */
 		adminReserveDAO.updateBalance(accountId, totalPrice);
 		
-		// 3. 거래 내역 저장
-		adminReserveDAO.insertTransaction(accountId, "DEPOSIT", totalPrice);
+		// 2. 거래 내역 저장
+		adminReserveDAO.insertTransaction(accountId, "DEPOSIT", totalPrice, memberId);
+		
+		// 3. 예약 정보 저장
+		adminReserveDAO.insertCustomerReservation(reserveId, seatId, memberId);
 	
 	}
 
@@ -92,6 +93,14 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	@Override
 	public AdminReservationVO getAdminReservationById(int reserveId) {
 		return adminReserveDAO.getAdminReservationById(reserveId);
+	}
+
+
+
+	// 결제 정보 조회
+	@Override
+	public CustomerGetReserveInfoVO selectPayInfo(Integer memberId, Integer reserveId, Integer seatId) {
+		return adminReserveDAO.selectPayInfo(memberId, reserveId, seatId);
 	}
 	
 }

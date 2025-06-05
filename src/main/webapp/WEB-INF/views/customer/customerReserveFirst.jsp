@@ -112,11 +112,15 @@
   let selected = { floor: null, location: null, headCount: null, date: null, time: null };
 
   function selectItem(element, type) {
+	// 선택된 항목의 'selected' 클래스를 모두 제거 (이전에 선택된 항목 초기화)
     document.querySelectorAll("." + type + "-option, ." + type + "-slot").forEach(el => {
       el.classList?.remove("selected");
     });
+    // 현재 선택된 항목에 'selected' 클래스 추가
     element.classList.add("selected");
+    // selected 객체에 해당 type의 값을 저장 (floor, location, headCount 등)
     selected[type] = element.innerText;
+     // 폼에서 해당 타입의 값을 입력 필드에 반영
     document.getElementById("input-" + type).value = selected[type];
 
     const form = document.getElementById("reserveForm");
@@ -126,12 +130,31 @@
       form.action = selected.floor === "1층" ?
         "${contextPath}/admin/customerReserveFirstFloor.do" :
         "${contextPath}/admin/customerReserveSecondFloor.do";
+        
+      selected.location = null;
+      selected.headCount = null;
+      document.getElementById("input-location").value = "";
+      document.getElementById("input-headCount").value = "";
+      // 선택된 위치와 인원수 항목의 'selected' 클래스 제거
+      document.querySelectorAll(".location-option").forEach(el => {
+        el.classList.remove("selected");
+      });
+      document.querySelectorAll(".headCount-option").forEach(el => {
+        el.classList.remove("selected");
+      });
     }
 
     if (type === "location") {
       const floor = selected.floor;
       const location = element.innerText;
 
+      // location이 바뀔 때마다 headCount 값 초기화
+      selected.headCount = null;
+      document.getElementById("input-headCount").value = "";  // 인원수 초기화
+      document.querySelectorAll(".headCount-option").forEach(el => {
+          el.classList.remove("selected");
+      });
+      
       if (floor === "1층") {
         if (location === "창가자리") showHeadCounts(["4명"]);
         else if (location === "입구근처") showHeadCounts(["6명"]);

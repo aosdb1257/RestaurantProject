@@ -99,18 +99,18 @@
       <div class="info-box">
         <div class="info-title">예약 정보</div>
         <div class="info-list">
-          날짜: <span class="highlight"><fmt:formatDate value="${adminReservationVO.reserveDate}" pattern="yyyy-MM-dd"/></span><br>
-          시간대: <span class="highlight">${adminReservationVO.timeSlot}</span><br>
-          식사시간: <span class="highlight">${adminReservationVO.mealTime}</span><br>
-          층수: <span class="highlight">${adminReservationVO.floor}</span>
+          날짜: <span class="highlight"><fmt:formatDate value="${info.reserveDate}" pattern="yyyy-MM-dd"/></span><br>
+          시간대: <span class="highlight">${info.timeSlot}</span><br>
+          식사시간: <span class="highlight">${info.mealTime}</span><br>
+          층수: <span class="highlight">${info.seatFloor}</span>
         </div>
 
         <div class="info-title" style="margin-top: 30px;">좌석 정보</div>
         <div class="info-list">
-          좌석 ID: <span class="highlight">${seatVO.seatId}</span><br>
-          위치: <span class="highlight">${seatVO.location}</span><br>
-          수용 인원: <span class="highlight">${seatVO.headCount}명</span><br>
-          층수: <span class="highlight">${seatVO.floor}</span>
+          좌석 ID: <span class="highlight">${info.seatId}</span><br>
+          위치: <span class="highlight">${info.location}</span><br>
+          수용 인원: <span class="highlight">${info.headCount}명</span><br>
+          층수: <span class="highlight">${info.seatFloor}</span>
         </div>
       </div>
 
