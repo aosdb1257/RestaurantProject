@@ -14,19 +14,20 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
-    body { height: 100vh; }
-    .container { width: 60%; margin: 0 auto; padding-top: 10px; display: flex; }
+	  .container {
+	    width: 1017px;
+	    display: flex;
+	    margin: 40px auto 0;
+	  }
     .step-menu { background-color: #e60113; color: white; flex: 1; display: flex; flex-direction: column; }
-    .step-menu div { padding: 20px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .step-menu div { padding: 79.4px 17px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
     .step-menu div.active { background-color: #a00010; }
-    form { flex: 10; }
-    .main-container { display: flex; flex-direction: column; background-color: #f9f9f9; }
+    .main-container { width: 887px; display: flex; flex-direction: column; background-color: #f9f9f9; border: 1px solid black;}
     .top-row { display: flex; justify-content: space-between; }
-    .area-select { display: flex; gap: 20px; background: white; border-right: 1px solid #ccc; flex: 6; padding: 10px; }
+    .area-select { height: 260px; display: flex; gap: 20px; background: white; border-right: 1px solid #ccc; flex: 6; padding: 10px; }
     .floor, .location { flex: 1; }
     .headCount-select { background: white; border-right: 1px solid #ccc; flex: 6; padding: 10px; }
-    .schedule-block { flex: 8; padding: 20px; }
+    .schedule-block { height: 310px; padding: 20px; }
     .floor-option, .location-option, .headCount-option, .time-slot {
       padding: 8px; margin: 5px 0; cursor: pointer; border-radius: 5px;
     }
@@ -39,6 +40,29 @@
       background-color: #e60113; color: white; border: none; border-radius: 5px;
       cursor: not-allowed; opacity: 0.6;
     }
+    .date-label {
+      margin-bottom : 20px;
+    }
+    .time-container {
+      height: 200px;
+    }
+    .time-list {
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 10px;
+	}
+	
+	.time-slot {
+	  flex: 0 0 25%;
+	  padding: 12px;
+	  margin-bottom: 10px;
+	  border: 1px solid #ccc;
+	  text-align: center;
+	  border-radius: 5px;
+	  cursor: pointer;
+	  background-color: white;
+	}
+	.next-btn {padding: 10px 60px;}
     .next-btn.enabled { cursor: pointer; opacity: 1; }
   </style>
 </head>
@@ -46,7 +70,7 @@
 
 <div class="container">
   <div class="step-menu">
-    <div class="active">01 상영시간</div>
+    <div class="active">01 에약하기</div>
     <div>02 인원/좌석</div>
     <div>03 결제</div>
     <div>04 결제완료</div>
@@ -54,6 +78,11 @@
 
   <form id="reserveForm" method="post" action="">
     <div class="main-container">
+      <div style="width: 827px; padding: 30px; font-size: 30px; 
+	       color: #1a4f7a; text-align: left; background-color: white;
+	       border-bottom: 2px solid #3180c3;">
+	  		예약 하기
+	  </div>
       <div class="top-row">
         <!-- 장소 -->
         <div class="area-select">
@@ -90,11 +119,15 @@
 
       <!-- 시간 선택 -->
       <div class="schedule-block">
-        <label>날짜 선택:
-          <input type="text" id="datePicker" value="${today}" required>
-        </label>
-        <div class="time-list" id="timeList"></div>
-
+        <div class="date-label">
+	        <label>날짜 선택:
+	          <input type="text" id="datePicker" value="${today}" required>
+	        </label>
+        </div>
+		<div class="time-container">
+	        <div class="time-list" id="timeList"></div>
+		</div>
+		
         <!-- Hidden Inputs -->
         <input type="hidden" name="floor" id="input-floor">
         <input type="hidden" name="location" id="input-location">
@@ -102,7 +135,10 @@
         <input type="hidden" name="date" id="input-date" value="${today}">
         <input type="hidden" name="time" id="input-time">
         <input type="hidden" name="reserveId" id="input-reserveId">
-        <button type="submit" class="next-btn" id="nextBtn" disabled>다음 단계</button>
+        
+        <div class="btn-area" style="text-align: center;">
+        	<button type="submit" class="next-btn" id="nextBtn" disabled>다음 단계</button>
+      	</div>
       </div>
     </div>
   </form>

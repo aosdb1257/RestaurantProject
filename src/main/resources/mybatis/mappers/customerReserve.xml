@@ -100,7 +100,20 @@
 	    AND SEAT_ID = #{seatId}
 	</select>
 	
-	<select id="selectPayInfo" parameterType="map" resultType="com.myspring.restaurant.vo.CustomerGetReserveInfoVO">
+	<resultMap id="reserveInfoMap" type="CustomerGetReserveInfoVO">
+	    <result property="seatId" column="SEAT_ID"/>
+	    <result property="location" column="LOCATION"/>
+	    <result property="headCount" column="HEAD_COUNT"/>
+	    <result property="seatFloor" column="SEAT_FLOOR"/>
+	    <result property="reserveId" column="RESERVE_ID"/>
+	    <result property="mealTime" column="MEAL_TIME"/>
+	    <result property="reserveDate" column="RESERVE_DATE"/>
+	    <result property="timeSlot" column="TIME_SLOT"/>
+	    <result property="createdAt" column="CREATED_AT"/>
+	</resultMap>
+	
+	
+	<select id="selectPayInfo" parameterType="map" resultMap="reserveInfoMap">
 	    SELECT
 	        s.SEAT_ID,
 	        s.LOCATION,

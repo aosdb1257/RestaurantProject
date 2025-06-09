@@ -8,9 +8,21 @@
 <meta charset="UTF-8">
 <title>결제정보</title>
 <style>
+  .main-container {
+    width: 1017px;
+    display: flex;
+    margin: 40px auto 0;
+  }
+  .side-container {
+  	margin-top: 40px;
+  	width: 130px;
+  }
+  .step-menu { background-color: #e60113; color: white; flex: 1; display: flex; flex-direction: column; }
+  .step-menu div { padding: 79.4px 17px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
+  .step-menu div.active { background-color: #a00010; }
   .container {
     width: 887px;
-    height: 662px;
+    height: 728px;
     display: flex;
     flex-direction: column;
     margin: 40px auto 0;
@@ -31,6 +43,7 @@
 
   .content {
     display: flex;
+    margin-top: 40px;
     padding: 30px 40px;
     flex: 1;
   }
@@ -91,6 +104,15 @@
 </style>
 </head>
 <body>
+<div class="main-container">
+  <div class="side-container">
+    <div class="step-menu">
+      <div>01 에약하기</div>
+      <div>02 인원/좌석</div>
+      <div>03 결제</div>
+      <div class="active">04 결제완료</div>
+    </div>
+  </div>
   <div class="container">
     <div class="header">결제정보</div>
 
@@ -126,10 +148,13 @@
               <th>합계</th>
             </tr>
           </thead>
+          
+          <c:set var="pricePerPerson" value="${adminReservationVO.mealTime == 'lunch' ? 100000 : 150000}" />
+		  <c:set var="totalPrice" value="${pricePerPerson * info.headCount}" />
           <tbody>
             <tr>
               <td>${adminReservationVO.mealTime == 'lunch' ? '런치' : '디너'}</td>
-              <td>${seatVO.headCount}</td>
+              <td>${info.headCount}</td>
               <td>
                 <c:choose>
                   <c:when test="${adminReservationVO.mealTime == 'lunch'}">100,000원</c:when>
@@ -146,5 +171,6 @@
       </div>
     </div>
   </div>
+</div>
 </body>
 </html>

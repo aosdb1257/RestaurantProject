@@ -45,7 +45,7 @@ public class AdminReserveControllerImpl extends BaseController {
 	@RequestMapping(value="/adminReserveAddMain.do" , method=RequestMethod.GET)
 	public ModelAndView adminReserveAddMain(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-	    return viewForm(request, response); // WEB-INF/views/admin/adminReserveAdd.jsp
+	    return viewForm(request, response); // WEB-INF/views/admin/adminReserveAddMain.jsp
 	}
 	
 	// 관리자 예약 등록 처리
@@ -75,7 +75,19 @@ public class AdminReserveControllerImpl extends BaseController {
 	    } 
 	}
 
+	// 관리자 예약 확인 화면 요청
+	@RequestMapping(value="/adminReserveCheckMain.do", method = RequestMethod.GET)
+	public ModelAndView adminReserveCheckMain(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return viewForm(request, response); // WEB-INF/views/admin/adminReserveCheckMain.jsp
+	}
 	
+//	@RequestMapping(value="/adminReserveCheck.do", method = RequestMethod.GET)
+//	public List<ReserveInfoVO> checkReserve (
+//		        @RequestParam("date") String date,
+//		        @RequestParam("floor") int floor) {
+//		
+//		return adminReserveService.getReserveInfoByDateAndFloor(date, floor);
+//	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------
 	// 고객 예약 첫번쨰 화면 요청
@@ -227,6 +239,9 @@ public class AdminReserveControllerImpl extends BaseController {
 	    Integer memberId = Integer.parseInt("15");
 	    Integer reserveId = (Integer) session.getAttribute("reserveId");
 	    Integer seatId = (Integer) session.getAttribute("seatId");
+	    logger.info("memberId : " + memberId);
+	    logger.info("reserveId : " + reserveId);
+	    logger.info("seatId : " + seatId);
 	    
 	    CustomerGetReserveInfoVO infoVo = adminReserveService.selectPayInfo(memberId, reserveId, seatId);
 	    

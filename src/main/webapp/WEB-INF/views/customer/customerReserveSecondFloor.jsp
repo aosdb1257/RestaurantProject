@@ -8,6 +8,18 @@
 <meta charset="UTF-8">
 <title>좌석 선택</title>
 <style>
+  .main-container {
+    width: 1017px;
+    display: flex;
+    margin: 40px auto 0;
+  }
+  .side-container {
+  	margin-top: 40px;
+  	width: 130px;
+  }
+  .step-menu { background-color: #e60113; color: white; flex: 1; display: flex; flex-direction: column; }
+  .step-menu div { padding: 79.4px 17px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
+  .step-menu div.active { background-color: #a00010; }
   .container {
     width: 887px;
     display: flex;
@@ -83,32 +95,41 @@
 </style>
 </head>
 <body>
-<div class="container">
-  <div style="width: 827px; padding: 30px; font-size: 30px; 
-     color: #1a4f7a; text-align: left; border-bottom: 2px solid #3180c3;">
-    좌석 선택
-  </div>
-  <div class="info-space">
-    <div class="info-box">층 : ${floor}</div>
-    <div class="info-box">위치 : ${location}</div>
-    <div class="info-box">인원수 : ${headCount}</div>
-    <div class="info-box">날짜 : ${date}</div>
-    <div class="info-box">시간 : ${time}</div>
-  </div>
-
-  <div class="seat-space">
-    <div class="seat disabled" data-seat-id="9" style="top: 48px; left: 95px; width: 40px; height: 68px;" onclick="selectSeat(9)">예약가능</div>
-    <div class="seat disabled" data-seat-id="10" style="top: 205px; left: 109px; width: 77px; height: 93px;" onclick="selectSeat(10)">예약가능</div>
-    <div class="seat disabled" data-seat-id="11" style="top: 392px; left: 125px; width: 105px; height: 60px;" onclick="selectSeat(11)">예약가능</div>
-    <div class="seat disabled" data-seat-id="12" style="top: 155px; left: 270px; width: 92px; height: 139px;" onclick="selectSeat(12)">예약가능</div>
-    <div class="seat disabled" data-seat-id="13" style="top: 417px; left: 338px; width: 72px; height: 99px;" onclick="selectSeat(13)">예약가능</div>
-    <div class="seat disabled" data-seat-id="14" style="top: 170px; left: 480px; width: 120px; height: 60px;" onclick="selectSeat(14)">예약가능</div>
-    <div class="seat disabled" data-seat-id="15" style="top: 328px; left: 496px; width: 75px; height: 88px;" onclick="selectSeat(15)">예약가능</div>
-    <div class="seat disabled" data-seat-id="16" style="top: 90px; left: 683px; width: 92px; height: 55px;" onclick="selectSeat(16)">예약가능</div>
-    <div class="seat disabled" data-seat-id="17" style="top: 266px; left: 703px; width: 62px; height: 96px;" onclick="selectSeat(17)">예약가능</div>
-  </div>
+<div class="main-container">
+	<div class="side-container">
+	    <div class="step-menu">
+	      <div>01 에약하기</div>
+	      <div class="active">02 인원/좌석</div>
+	      <div>03 결제</div>
+	      <div>04 결제완료</div>
+	    </div>
+    </div>
+	<div class="container">
+	  <div style="width: 827px; padding: 30px; font-size: 30px; 
+	     color: #1a4f7a; text-align: left; border-bottom: 2px solid #3180c3;">
+	    좌석 선택
+	  </div>
+	  <div class="info-space">
+	    <div class="info-box">층 : ${floor}</div>
+	    <div class="info-box">위치 : ${location}</div>
+	    <div class="info-box">인원수 : ${headCount}</div>
+	    <div class="info-box">날짜 : ${date}</div>
+	    <div class="info-box">시간 : ${time}</div>
+	  </div>
+	
+	  <div class="seat-space">
+	    <div class="seat disabled" data-seat-id="9" style="top: 48px; left: 95px; width: 40px; height: 68px;" onclick="selectSeat(9)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="10" style="top: 205px; left: 109px; width: 77px; height: 93px;" onclick="selectSeat(10)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="11" style="top: 392px; left: 125px; width: 105px; height: 60px;" onclick="selectSeat(11)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="12" style="top: 155px; left: 270px; width: 92px; height: 139px;" onclick="selectSeat(12)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="13" style="top: 417px; left: 338px; width: 72px; height: 99px;" onclick="selectSeat(13)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="14" style="top: 170px; left: 480px; width: 120px; height: 60px;" onclick="selectSeat(14)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="15" style="top: 328px; left: 496px; width: 75px; height: 88px;" onclick="selectSeat(15)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="16" style="top: 90px; left: 683px; width: 92px; height: 55px;" onclick="selectSeat(16)">예약가능</div>
+	    <div class="seat disabled" data-seat-id="17" style="top: 266px; left: 703px; width: 62px; height: 96px;" onclick="selectSeat(17)">예약가능</div>
+	  </div>
+	</div>
 </div>
-
 <form id="seatSubmitForm" action="${contextPath}/admin/customerReserveThird.do" method="post">
   <input type="hidden" name="seatId" id="seatIdInput">
   <input type="hidden" name="floor" value="${floor}">

@@ -8,6 +8,18 @@
 <meta charset="UTF-8">
 <title>좌석 선택</title>
 <style>
+  .main-container {
+    width: 1017px;
+    display: flex;
+    margin: 40px auto 0;
+  }
+  .side-container {
+  	margin-top: 40px;
+  	width: 130px;
+  }
+  .step-menu { background-color: #e60113; color: white; flex: 1; display: flex; flex-direction: column; }
+  .step-menu div { padding: 79.4px 17px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
+  .step-menu div.active { background-color: #a00010; }
   .container {
     width: 887px;
     display: flex;
@@ -83,46 +95,56 @@
 </style>
 </head>
 <body>
-<div class="container">
-    <!-- 정보 출력 영역 -->
-    <div style="width: 827px; padding: 30px; font-size: 30px; 
-     color: #1a4f7a; text-align: left;
-    border-bottom: 2px solid #3180c3;">
-  		좌석 선택
-	</div>
-	<div class="info-space">
-	  <div class="info-box">층 : ${floor}</div>
-	  <div class="info-box">위치 : ${location}</div>
-	  <div class="info-box">인원수 : ${headCount}</div>
-	  <div class="info-box">날짜 : ${date}</div>
-	  <div class="info-box">시간 : ${time}</div>
-	</div>
-
-	<div class="seat-space">
-	  <!-- 좌측 상단, 1, 창가 -->
-	  <div class="seat disabled" data-seat-id="1" style="top: 295px; left: 40px; width: 84px; height: 88px;" onclick="selectSeat(1)">예약가능</div>
+<div class="main-container">
+	<div class="side-container">
+	    <div class="step-menu">
+	      <div>01 에약하기</div>
+	      <div class="active">02 인원/좌석</div>
+	      <div>03 결제</div>
+	      <div>04 결제완료</div>
+	    </div>
+    </div>
+	<div class="container">
+	    <!-- 정보 출력 영역 -->
+	    <div style="width: 827px; padding: 30px; font-size: 30px; 
+	         color: #1a4f7a; text-align: left;
+	         border-bottom: 2px solid #3180c3;">
+	  		좌석 선택
+		</div>
+		<div class="info-space">
+		  <div class="info-box">층 : ${floor}</div>
+		  <div class="info-box">위치 : ${location}</div>
+		  <div class="info-box">인원수 : ${headCount}</div>
+		  <div class="info-box">날짜 : ${date}</div>
+		  <div class="info-box">시간 : ${time}</div>
+		</div>
 	
-	  <!-- 좌측 아래, 2, 구석  -->
-	  <div class="seat disabled" data-seat-id="2" style="top: 507px; left: 45px; width: 136px; height: 40px;" onclick="selectSeat(2)">예약가능</div>
-	
-	  <!-- 2열 위, 3, 중앙 -->
-	  <div class="seat disabled" data-seat-id="3" style="top: 257px; left: 196px; width: 87px; height: 84px;" onclick="selectSeat(3)">예약가능</div>
-	
-	  <!-- 2열 아래, 4, 중앙 -->
-	  <div class="seat disabled" data-seat-id="4" style="top: 407px; left: 184px; width: 79px; height: 55px;" onclick="selectSeat(4)">예약가능</div>
-	
-	  <!-- 3열, 5, 입구근처 -->
-	  <div class="seat disabled" data-seat-id="5" style="top: 327px; left: 368px; width: 135px; height: 85px;" onclick="selectSeat(5)">예약가능</div>
-	
-	  <!-- 우측 위, 6, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="6" style="top: 78px; left: 678px; width: 82px; height: 62px;" onclick="selectSeat(6)">예약가능</div>
-	
-	  <!-- 우측 중앙, 7, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="7" style="top: 174px; left: 769px; width: 73px; height: 67px;" onclick="selectSeat(7)">예약가능</div>
-	
-	  <!-- 우측 아래, 8, 구석자리 -->
-	  <div class="seat disabled" data-seat-id="8" style="top: 302px; left: 732px; width: 68px; height: 70px;" onclick="selectSeat(8)">예약가능</div>
-	
+		<div class="seat-space">
+		  <!-- 좌측 상단, 1, 창가 -->
+		  <div class="seat disabled" data-seat-id="1" style="top: 295px; left: 40px; width: 84px; height: 88px;" onclick="selectSeat(1)">예약가능</div>
+		
+		  <!-- 좌측 아래, 2, 구석  -->
+		  <div class="seat disabled" data-seat-id="2" style="top: 507px; left: 45px; width: 136px; height: 40px;" onclick="selectSeat(2)">예약가능</div>
+		
+		  <!-- 2열 위, 3, 중앙 -->
+		  <div class="seat disabled" data-seat-id="3" style="top: 257px; left: 196px; width: 87px; height: 84px;" onclick="selectSeat(3)">예약가능</div>
+		
+		  <!-- 2열 아래, 4, 중앙 -->
+		  <div class="seat disabled" data-seat-id="4" style="top: 407px; left: 184px; width: 79px; height: 55px;" onclick="selectSeat(4)">예약가능</div>
+		
+		  <!-- 3열, 5, 입구근처 -->
+		  <div class="seat disabled" data-seat-id="5" style="top: 327px; left: 368px; width: 135px; height: 85px;" onclick="selectSeat(5)">예약가능</div>
+		
+		  <!-- 우측 위, 6, 구석자리 -->
+		  <div class="seat disabled" data-seat-id="6" style="top: 78px; left: 678px; width: 82px; height: 62px;" onclick="selectSeat(6)">예약가능</div>
+		
+		  <!-- 우측 중앙, 7, 구석자리 -->
+		  <div class="seat disabled" data-seat-id="7" style="top: 174px; left: 769px; width: 73px; height: 67px;" onclick="selectSeat(7)">예약가능</div>
+		
+		  <!-- 우측 아래, 8, 구석자리 -->
+		  <div class="seat disabled" data-seat-id="8" style="top: 302px; left: 732px; width: 68px; height: 70px;" onclick="selectSeat(8)">예약가능</div>
+		
+		</div>
 	</div>
 </div>
 <form id="seatSubmitForm" action="${contextPath}/admin/customerReserveThird.do" method="post">

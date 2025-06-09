@@ -27,15 +27,28 @@
 <title>Insert title here</title>
 </head>
 <style>
+    .main-container {
+      width: 1017px;
+      display: flex;
+      margin: 40px auto 0;
+    }
+    .side-container {
+  	  margin-top: 40px;
+  	  width: 130px;
+    }
+    .step-menu { background-color: #e60113; color: white; flex: 1; display: flex; flex-direction: column; }
+    .step-menu div { padding: 79.4px 17px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .step-menu div.active { background-color: #a00010; }
     .container {
       width: 887px;
-      height: 662px;
+      height: 728px;
       display: flex;
       flex-direction: column;
       margin: 40px auto 0;
       border: 1px solid black;
     }
     .main-reservation {
+    	margin-top: 40px;
     	display: flex;
     }
     .left-main{
@@ -140,14 +153,23 @@
 	    color: red;
 	}
 	.pay-btn {
-		margin-top: 20px;
+		margin-top: 35px;
 		width: 250px;
-		padding : 15px;
+		padding : 20px;
 	    background-color: #ff4d4d; 
 	    color: white;              
 	}
 </style>
 <body>
+<div class="main-container">
+	<div class="side-container">
+	    <div class="step-menu">
+	      <div>01 에약하기</div>
+	      <div>02 인원/좌석</div>
+	      <div class="active">03 결제</div>
+	      <div>04 결제완료</div>
+	    </div>
+    </div>
 	<div class="container">
 	    <div style="width: 827px; padding: 30px; font-size: 30px; 
 		    color: #1a4f7a; text-align: left;
@@ -230,5 +252,6 @@
 		  </div>
 		</form>
 	</div>
+</div>
 </body>
 </html>
