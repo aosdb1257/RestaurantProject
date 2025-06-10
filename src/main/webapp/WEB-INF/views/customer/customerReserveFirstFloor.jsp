@@ -182,7 +182,7 @@
       <c:if test='${!status.last}'>,</c:if>
     </c:forEach>
   ];
-  console.log("✅ 서버에서 받아온 seatList:", seatList);
+  console.log("서버에서 받아온 seatList:", seatList);
   
     //클라이언트에서 선택한 위치와 인원수 일치시 선택가능하게
 	window.onload = function () {

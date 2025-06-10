@@ -1,7 +1,9 @@
 package com.myspring.restaurant.controller;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,15 +13,18 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.myspring.restaurant.BaseController;
 import com.myspring.restaurant.service.AdminReserveService;
 import com.myspring.restaurant.service.AdminReserveServiceImpl;
+import com.myspring.restaurant.vo.AdminCheckSeatVO;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
@@ -81,13 +86,44 @@ public class AdminReserveControllerImpl extends BaseController {
 		return viewForm(request, response); // WEB-INF/views/admin/adminReserveCheckMain.jsp
 	}
 	
-//	@RequestMapping(value="/adminReserveCheck.do", method = RequestMethod.GET)
-//	public List<ReserveInfoVO> checkReserve (
-//		        @RequestParam("date") String date,
-//		        @RequestParam("floor") int floor) {
-//		
-//		return adminReserveService.getReserveInfoByDateAndFloor(date, floor);
-//	}
+	// 날짜와 시간에 해당하는 예약 조회
+	@RequestMapping(value="/adminReserveCheck.do", method = RequestMethod.GET)
+	@ResponseBody
+	public List<AdminCheckSeatVO> checkReserve (
+	        @RequestParam("date") String date,
+	        @RequestParam("time") String time) {
+		
+		logger.info("date : " + date);
+		logger.info("time : " + time);
+		
+	    // 1. 예약한 고객예약 아이디와 좌석번호 조회
+		List<AdminCheckSeatVO> reservedId = adminReserveService.getReservedIdByDate(date, time);
+	    logger.info("관리자 예약된 좌석 확인용 reservedId : " + reservedId);
+
+	    return reservedId;  
+	}
+	
+	@RequestMapping(value="/adminReserveDelete.do", method= RequestMethod.POST)
+	public String adminReserveDelete(
+			@RequestParam("seatId") int seatId,
+            @RequestParam("customerId") int customerId,
+            @RequestParam("memberId") int memberId,
+            @RequestParam("content") String content) {
+		
+		logger.info("예약삭제 customerId : " + customerId);
+		logger.info("예약삭제 seatId : " + seatId);
+		logger.info("예약삭제 memberId : " + memberId);
+		logger.info("예약삭제 content : " + content);
+		
+		try {
+			adminReserveService.adminReserveDelete(seatId, customerId, memberId, content);
+		} catch (Exception e) {
+			logger.error("예약 삭제 중 오류 발생", e);
+			return "errorPage";
+		}
+		
+		return null;
+	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------
 	// 고객 예약 첫번쨰 화면 요청
@@ -129,8 +165,10 @@ public class AdminReserveControllerImpl extends BaseController {
             System.out.println("층수: " + seat.getFloor());
             System.out.println("-------------------------");
         }
+        // 전체 좌석 목록
         mav.addObject("seatList", restaurantSeatVOs);
         
+        //
         List<Integer> reservedSeatsId = adminReserveService.getReservedSeats(reserveId); 
         mav.addObject("reservedSeatsId", reservedSeatsId);
         

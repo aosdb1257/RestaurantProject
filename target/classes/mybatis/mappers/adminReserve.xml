@@ -6,7 +6,8 @@
 <mapper namespace="mappers.adminReserve">
 
     <insert id="insertReserve" parameterType="com.myspring.restaurant.vo.AdminReserveAddVO">
-        INSERT INTO ADMIN_RESERVATION (
+        INSERT 
+        INTO ADMIN_RESERVATION (
             RESERVE_ID, MEAL_TIME, RESERVE_DATE, TIME_SLOT, CREATED_AT
         ) VALUES (
             ADMIN_RESERVATION_SEQ.NEXTVAL,
@@ -16,5 +17,33 @@
             SYSTIMESTAMP
         )
     </insert>
-
+    
+	<select id="getReservedIdByDate" resultType="com.myspring.restaurant.vo.AdminCheckSeatVO">
+	    SELECT CUSTOMER_ID AS customerId,
+	    	   MEMBER_ID AS memberId,
+	    	   SEAT_ID AS seatId
+	    FROM CUSTOMER_RESERVATION
+	    WHERE RESERVE_ID = (
+	        SELECT RESERVE_ID
+	        FROM ADMIN_RESERVATION
+	        WHERE RESERVE_DATE = TO_DATE(#{date}, 'YYYY-MM-DD')
+	          AND TIME_SLOT = #{time}
+	    )
+	</select>
+	
+	<insert id="adminAddDeleteMessage" parameterType="map">
+    	INSERT 
+    	INTO notification (notification_id, customer_id, message, is_read, created_at)
+    	VALUES (seq_notification_id.NEXTVAL, 
+		    	#{customerId}, 
+		    	#{content}, 
+		    	0, 
+		    	CURRENT_TIMESTAMP);
+	</insert>
+	
+	<delete id="adminReserveDelete" parameterType="int">
+	    DELETE 
+	    FROM CUSTOMER_RESERVATION
+	    WHERE CUSTOMER_ID = #{customerId};
+	</delete>
 </mapper>

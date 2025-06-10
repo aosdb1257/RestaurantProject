@@ -1,6 +1,7 @@
 package com.myspring.restaurant.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.restaurant.dao.AdminReserveDAO;
+import com.myspring.restaurant.vo.AdminCheckSeatVO;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
@@ -27,17 +29,35 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	public void adminReserveAddDb(AdminReserveAddVO reserve) {
 		adminReserveDAO.adminReserveAddDb(reserve);
 	}
-
-
-
 	
+	@Override
+	public List<AdminCheckSeatVO> getReservedIdByDate(String date, String time) {
+		return adminReserveDAO.getReservedIdByDate(date, time);
+	}
+	
+	// 관리자가 예약 취소
+	@Transactional
+	@Override
+	public void adminReserveDelete(int seatId, int customerId, int memberId, String content) {
+		// 1. 알림 테이블에 저장하기(예약취소사유)
+		adminReserveDAO.adminAddDeleteMessage(customerId, content);
+		
+		// 2. 예약 취소하기
+		adminReserveDAO.adminReserveDelete(customerId);
+	}
 	// -------------------------------------------------------------------------------------------------------------------------
 	
+
+
+
+
 	// 고객 첫번째 예약 화면 요청
 	@Override
 	public List<CustomerReserveFirstVO> customerReserveFirst() {
 		return adminReserveDAO.customerReserveFirst();
 	}
+
+
 
 	// 좌석 테이블 모두 조회
 	@Override

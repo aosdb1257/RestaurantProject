@@ -1,7 +1,9 @@
 package com.myspring.restaurant.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.myspring.restaurant.vo.AdminCheckSeatVO;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
@@ -12,8 +14,12 @@ import com.myspring.restaurant.vo.SeatVO;
 public interface AdminReserveService {
 	// 관리자 예약 등록하기
 	void adminReserveAddDb(AdminReserveAddVO reserve);
-
 	
+	// 관리자가 예약 조회시 사용(예약된 좌석 확인) => 날짜와 시간으로 예약된 좌석 아이디 조회 
+	List<AdminCheckSeatVO> getReservedIdByDate(String date, String time);
+	
+	// 관리자가 예약 취소
+	void adminReserveDelete(int seatId, int customerId, int memberId, String content);
 	// ---------------------------------------------------------------------------------------------------------------
 	
 	// 고객 예약 첫번째 화면 요청
@@ -36,5 +42,10 @@ public interface AdminReserveService {
 
 	// 결제 정보 조회
 	CustomerGetReserveInfoVO selectPayInfo(Integer memberId, Integer reserveId, Integer seatId);
+
+	
+
+	
+	
 
 }

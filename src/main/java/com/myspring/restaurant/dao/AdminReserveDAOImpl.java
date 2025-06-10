@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.myspring.restaurant.vo.AdminCheckSeatVO;
 import com.myspring.restaurant.vo.AdminReservationVO;
 import com.myspring.restaurant.vo.AdminReserveAddVO;
 import com.myspring.restaurant.vo.CustomerGetReserveInfoVO;
@@ -27,8 +28,34 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 		sqlSession.insert("mappers.adminReserve.insertReserve", reserve);
 	}
 	
+	@Override
+	public List<AdminCheckSeatVO> getReservedIdByDate(String date, String time) {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("date", date);
+	    paramMap.put("time", time);
+	    
+		return sqlSession.selectList("mappers.adminReserve.getReservedIdByDate", paramMap);
+	}
+	
+	@Override
+	public void adminAddDeleteMessage(int customerId, String content) {
+	    Map<String, Object> params = new HashMap<String, Object>();
+	    params.put("customerId", customerId);
+	    params.put("content", content);
+
+	    sqlSession.insert("mappers.notification.adminAddDeleteMessage", params);
+	}
+
+	@Override
+	public void adminReserveDelete(int customerId) {
+		sqlSession.delete("mappers.adminReserve.adminReserveDelete", customerId);
+	}
+
+	
+	
 	// ------------------------------------------------------------------------------------------------
 	
+
 	// 고객 예약 첫번째 화면 요청
 	@Override
 	public List<CustomerReserveFirstVO> customerReserveFirst() {
