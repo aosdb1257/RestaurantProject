@@ -38,11 +38,22 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 	// 관리자가 예약 취소
 	@Transactional
 	@Override
-	public void adminReserveDelete(int seatId, int customerId, int memberId, String content) {
-		// 1. 알림 테이블에 저장하기(예약취소사유)
-		adminReserveDAO.adminAddDeleteMessage(customerId, content);
+	public void adminReserveDelete(int seatId, int customerId, int memberId, String content, String time, String date) {
+		int accountId = 1;
 		
-		// 2. 예약 취소하기
+		// 1. 알림 테이블에 저장하기(예약취소사유)
+		adminReserveDAO.adminAddDeleteMessage(customerId, time, date, seatId , content);
+
+		// 2. 환불 금액 조회
+		int refundMoney = adminReserveDAO.getRefundMoney(customerId);
+				
+	    // 3. 거래 내역 테이블에 환불 내역 추가
+		adminReserveDAO.insertRefundTransaction(accountId, "REFUND", refundMoney, customerId);
+
+	    // 4. 계좌 잔액 복원
+		adminReserveDAO.updateRefundBalance(refundMoney);
+		
+		// 5. 예약 취소하기
 		adminReserveDAO.adminReserveDelete(customerId);
 	}
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -72,6 +83,7 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 		return adminReserveDAO.getReservedSeats(reserveId);
 	}
 
+
 	// 결제하고 결제정보 저장
 	@Override
 	@Transactional
@@ -95,12 +107,17 @@ public class AdminReserveServiceImpl implements AdminReserveService {
 		 */
 		adminReserveDAO.updateBalance(accountId, totalPrice);
 		
-		// 2. 거래 내역 저장
-		adminReserveDAO.insertTransaction(accountId, "DEPOSIT", totalPrice, memberId);
-		
-		// 3. 예약 정보 저장
+		// 2. 예약 정보 저장
 		adminReserveDAO.insertCustomerReservation(reserveId, seatId, memberId);
-	
+		
+		// 3. 거래 아이디 조회
+		int customerId = adminReserveDAO.getCustomerId(reserveId, seatId, memberId);
+		
+		// 4. 거래 내역 저장
+		adminReserveDAO.insertTransaction(accountId, "DEPOSIT", totalPrice, customerId);
+		
+		
+		
 	}
 
 	// 아이디로 좌석 조회

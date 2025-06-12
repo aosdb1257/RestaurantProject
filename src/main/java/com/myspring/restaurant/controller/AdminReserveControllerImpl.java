@@ -108,7 +108,9 @@ public class AdminReserveControllerImpl extends BaseController {
 			@RequestParam("seatId") int seatId,
             @RequestParam("customerId") int customerId,
             @RequestParam("memberId") int memberId,
-            @RequestParam("content") String content) {
+            @RequestParam("content") String content,
+            @RequestParam("time") String time,
+            @RequestParam("date") String date) {
 		
 		logger.info("예약삭제 customerId : " + customerId);
 		logger.info("예약삭제 seatId : " + seatId);
@@ -116,13 +118,15 @@ public class AdminReserveControllerImpl extends BaseController {
 		logger.info("예약삭제 content : " + content);
 		
 		try {
-			adminReserveService.adminReserveDelete(seatId, customerId, memberId, content);
+			// 트랜잭션
+			adminReserveService.adminReserveDelete(seatId, customerId, memberId, content, time, date);
+			
+			
 		} catch (Exception e) {
 			logger.error("예약 삭제 중 오류 발생", e);
 			return "errorPage";
 		}
-		
-		return null;
+		return "redirect:/admin/adminReserveCheckMain.do";
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------
@@ -250,6 +254,7 @@ public class AdminReserveControllerImpl extends BaseController {
 			session.setAttribute("seatId", seatId);
 			//Integer memberId = (Integer) session.getAttribute("memberId");
 			Integer memberId = Integer.parseInt("15");
+			
 			// 트랜잭션
 			adminReserveService.reserveAndPay(seatId, reserveId, totalPrice, memberId);
 	        

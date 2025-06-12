@@ -19,10 +19,19 @@ public interface AdminReserveDAO {
 	List<AdminCheckSeatVO> getReservedIdByDate(String date, String time);
 	
 	// 알림 테이블에 추가(삭제 사유)
-	void adminAddDeleteMessage(int customerId, String content);
+	void adminAddDeleteMessage(int customerId, String time, String date, int seatId, String content);
 	
 	// 예약 취소
 	void adminReserveDelete(int customerId);
+	
+	// 거래 금액 조회(환불용)
+	int getRefundMoney(int customerId);
+	
+	// 거래 내역 추가(환불용)
+	void insertRefundTransaction(int accountId, String refund, int refundMoney, int customerId);
+	
+	// 환불금액 차감
+	void updateRefundBalance(int refundMoney);
 	
 	// ------------------------------------------------------------------------------
 	// 고객 예약 첫번째 화면
@@ -44,7 +53,7 @@ public interface AdminReserveDAO {
 	void updateBalance(int accountId, int i);
 	
 	// 거래 내역 저장
-	void insertTransaction(int accountId, String string, int totalPrice, Integer memberId);
+	void insertTransaction(int accountId, String string, int totalPrice, Integer customerId);
 	
 	// 아이디로 해당 좌석 조회
 	SeatVO getSeatById(int seatId);
@@ -57,6 +66,16 @@ public interface AdminReserveDAO {
 	
 	// 결제 정보 조회
 	CustomerGetReserveInfoVO selectPayInfo(Integer memberId, Integer reserveId, Integer seatId);
+
+	// 결제 아이디 조회
+	int getCustomerId(int reserveId, int seatId, Integer memberId);
+
+	
+	
+
+	
+	
+
 
 	
 

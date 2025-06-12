@@ -32,6 +32,7 @@
 	    SELECT SEAT_ID
 	    FROM CUSTOMER_RESERVATION
 	    WHERE RESERVE_ID = #{reserveId}
+	    AND STATUS = 'ACTIVE'
 	</select>
     
     <!-- 고객 - 예약정보 저장 -->
@@ -57,14 +58,14 @@
 	<!-- 거래내역 저장 -->
 	<insert id="insertTransaction" parameterType="map">
 	    INSERT INTO PAYMENT_TRANSACTION (
-	        TRANSACTION_ID, ACCOUNT_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_DATE, MEMBER_ID
+	        TRANSACTION_ID, ACCOUNT_ID, TRANSACTION_TYPE, AMOUNT, TRANSACTION_DATE, CUSTOMER_ID
 	    ) VALUES (
 	        SEQ_PAYMENT_TRANSACTION_ID.NEXTVAL,
 	        #{accountId}, 
 	        #{type}, 
 	        #{totalPrice}, 
 	        SYSDATE,
-	        #{memberId}
+	        #{customerId}
 	    )
 	</insert>
 	
@@ -135,5 +136,12 @@
 	      AND cr.SEAT_ID = #{seatId}
 	</select>
 	
+	<select id="getCustomerId" parameterType="map" resultType="int">
+	    SELECT CUSTOMER_ID
+	    FROM CUSTOMER_RESERVATION
+	    WHERE RESERVE_ID = #{reserveId}
+	      AND SEAT_ID = #{seatId}
+	      AND MEMBER_ID = #{memberId}
+</select>
 	
 </mapper>

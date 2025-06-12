@@ -38,23 +38,53 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	}
 	
 	@Override
-	public void adminAddDeleteMessage(int customerId, String content) {
+	public void adminAddDeleteMessage(int customerId, String time, String date, int seatId, String content) {
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put("customerId", customerId);
+	    params.put("time", time);
+	    params.put("date", date);
+	    params.put("seatId", seatId);
 	    params.put("content", content);
 
-	    sqlSession.insert("mappers.notification.adminAddDeleteMessage", params);
+	    sqlSession.insert("mappers.adminReserve.adminAddDeleteMessage", params);
 	}
 
+	// 거래 금액 조회(환불용)
+	@Override
+	public int getRefundMoney(int customerId) {
+		return sqlSession.selectOne("mappers.adminReserve.getRefundMoney", customerId);
+	}
+	
+	// 거래 내역 추가(환불용)
+	@Override
+	public void insertRefundTransaction(int accountId, String refund, int refundMoney, int customerId) {
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("accountId", accountId);
+	    paramMap.put("refund", refund);
+	    paramMap.put("refundMoney", refundMoney);
+	    paramMap.put("customerId", customerId);
+
+	    sqlSession.insert("mappers.adminReserve.insertRefundTransaction", paramMap);
+		
+	}
+	// 환불금액 차감
+	@Override
+	public void updateRefundBalance(int refundMoney) {
+		sqlSession.update("mappers.adminReserve.updateBalance", refundMoney);
+		
+	}
+	// 예약 취소하기
 	@Override
 	public void adminReserveDelete(int customerId) {
 		sqlSession.delete("mappers.adminReserve.adminReserveDelete", customerId);
 	}
-
-	
-	
 	// ------------------------------------------------------------------------------------------------
 	
+
+
+
+
+
 
 	// 고객 예약 첫번째 화면 요청
 	@Override
@@ -95,12 +125,12 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	}
 	// 거래 내역 저장
 	@Override
-	public void insertTransaction(int accountId, String type, int totalPrice, Integer memberId) {
+	public void insertTransaction(int accountId, String type, int totalPrice, Integer customerId) {
 	    Map<String, Object> paramMap = new HashMap<String, Object>();
 	    paramMap.put("accountId", accountId);
 	    paramMap.put("type", type);
 	    paramMap.put("totalPrice", totalPrice);
-	    paramMap.put("memberId", memberId);
+	    paramMap.put("customerId", customerId);
 	    
 		sqlSession.insert("mappers.customerReserve.insertTransaction", paramMap);
 	}
@@ -125,6 +155,16 @@ public class AdminReserveDAOImpl implements AdminReserveDAO {
 	public AdminReservationVO getAdminReservationById(int reserveId) {
 		return sqlSession.selectOne("mappers.customerReserve.selectAdminReservationById", reserveId);
 	}
+	// 결제 아이디 조회
+	@Override
+	public int getCustomerId(int reserveId, int seatId, Integer memberId) {
+		Map<String, Integer> paramMap = new HashMap<String, Integer>();
+		paramMap.put("reserveId", reserveId);
+		paramMap.put("seatId", seatId);
+		paramMap.put("memberId", memberId);
+	    return sqlSession.selectOne("mappers.customerReserve.getCustomerId", paramMap);
+	}
+
 	// 중복 결제 방지
 	@Override
 	public int countReservation(int reserveId, int seatId) {

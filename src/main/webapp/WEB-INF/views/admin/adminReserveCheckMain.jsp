@@ -239,6 +239,18 @@
 	      resultInput.value = result.value;
 	      form.appendChild(resultInput);
 
+	      const dateInput = document.createElement("input");
+	      dateInput.type = "hidden";
+	      dateInput.name = "date";
+	      dateInput.value = document.getElementById("reserveDate").value;
+	      form.appendChild(dateInput);
+
+	      const timeInput = document.createElement("input");
+	      timeInput.type = "hidden";
+	      timeInput.name = "time";
+	      timeInput.value = document.getElementById("time").value;
+	      form.appendChild(timeInput);
+	      
 	      document.body.appendChild(form);
 	      form.submit();
 	    }

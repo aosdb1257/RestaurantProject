@@ -149,15 +149,15 @@
             </tr>
           </thead>
           
-          <c:set var="pricePerPerson" value="${adminReservationVO.mealTime == 'lunch' ? 100000 : 150000}" />
+          <c:set var="pricePerPerson" value="${info.mealTime == 'lunch' ? 100000 : 150000}" />
 		  <c:set var="totalPrice" value="${pricePerPerson * info.headCount}" />
           <tbody>
             <tr>
-              <td>${adminReservationVO.mealTime == 'lunch' ? '런치' : '디너'}</td>
+              <td>${info.mealTime == 'lunch' ? '런치' : '디너'}</td>
               <td>${info.headCount}</td>
               <td>
                 <c:choose>
-                  <c:when test="${adminReservationVO.mealTime == 'lunch'}">100,000원</c:when>
+                  <c:when test="${info.mealTime == 'lunch'}">100,000원</c:when>
                   <c:otherwise>150,000원</c:otherwise>
                 </c:choose>
               </td>

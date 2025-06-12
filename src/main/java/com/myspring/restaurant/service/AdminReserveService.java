@@ -19,7 +19,7 @@ public interface AdminReserveService {
 	List<AdminCheckSeatVO> getReservedIdByDate(String date, String time);
 	
 	// 관리자가 예약 취소
-	void adminReserveDelete(int seatId, int customerId, int memberId, String content);
+	void adminReserveDelete(int seatId, int customerId, int memberId, String content, String time, String date);
 	// ---------------------------------------------------------------------------------------------------------------
 	
 	// 고객 예약 첫번째 화면 요청
@@ -42,6 +42,8 @@ public interface AdminReserveService {
 
 	// 결제 정보 조회
 	CustomerGetReserveInfoVO selectPayInfo(Integer memberId, Integer reserveId, Integer seatId);
+
+
 
 	
 
